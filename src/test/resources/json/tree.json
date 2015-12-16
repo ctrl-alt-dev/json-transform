@@ -1,0 +1,27 @@
+{
+  "value": 0,
+  "container": [
+    {
+      "value": 1,
+      "container": [
+        {
+          "value": 3
+        },
+        {
+          "value": 4
+        }
+      ]
+    },
+    {
+      "value": 2,
+      "container": [
+        {
+          "value": 5
+        },
+        {
+          "value": 6
+        }
+      ]
+    }
+  ]
+}

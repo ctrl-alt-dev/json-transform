@@ -1,0 +1,9 @@
+{
+    "results": {
+        "a": "path:value",
+        "b": "path:array",
+        "c": "path:object",
+        "d": "path:arrayOfObjects"
+    },
+    "value" : "nasigoreng"
+}

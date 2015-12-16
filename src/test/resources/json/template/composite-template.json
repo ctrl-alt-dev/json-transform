@@ -1,0 +1,7 @@
+{
+    "results": {
+        "a": "select:property(\"name\")",
+        "b": "path:object"
+    },
+    "value" : "nasigoreng"
+}

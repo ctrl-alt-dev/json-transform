@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>nl.cad.jsontransform</groupId>
+    <artifactId>json-transform</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Json Transform</name>
+    <description>A Java centric library to transform and map JSON documents</description>
+    <inceptionYear>2015</inceptionYear>
+    <url>https://github.com/ctrl-alt-dev/json-transform</url>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>scm:git://github.com/ctrl-alt-dev/json-transform.git</url>
+        <connection>scm:git:https://github.com/ctrl-alt-dev/json-transform.git</connection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Erik Hooijmeijer</name>
+            <organization>ctrl-alt-dev.nl</organization>
+            <url>http://www.ctrl-alt-dev.nl</url>
+        </developer>
+    </developers>
+
+    <properties>
+        <jackson.version>2.6.3</jackson.version>
+        <junit.version>4.10</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <defaultGoal>install</defaultGoal>
+
+        <plugins>
+
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.3</version>
+              <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+              </configuration>
+            </plugin>  
+
+        </plugins>
+    </build>
+
+</project>

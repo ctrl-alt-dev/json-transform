@@ -1,0 +1,17 @@
+{
+   "string": "string",
+   "number": 42,
+   "bigdecimal": 42.42,
+   "double": 1.2e42,
+   "list" : [ 1,2,3,4 ],
+   "listOfObjects": [
+      { "name":"erik" },
+      { "name":"fluffy" }
+   ],
+   "object": {
+      "some": "thing",
+      "other": "thing"
+   },
+   "null": null,
+   "bool": true
+}
