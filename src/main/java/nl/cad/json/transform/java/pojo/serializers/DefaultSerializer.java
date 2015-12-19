@@ -1,4 +1,19 @@
-package nl.cad.json.transform.java.serializers;
+/*
+ * Copyright 2015 E.Hooijmeijer / www.ctrl-alt-dev.nl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package nl.cad.json.transform.java.pojo.serializers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -6,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.java.PojoMapper;
+import nl.cad.json.transform.java.pojo.ToDocumentMapper;
 import nl.cad.json.transform.util.NodeUtils;
 
 public class DefaultSerializer implements Serializer {
@@ -24,7 +39,7 @@ public class DefaultSerializer implements Serializer {
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object toDocument(PojoMapper mapper, List<Object> stack, Object java) {
+    public Object toDocument(ToDocumentMapper mapper, List<Object> stack, Object java) {
         if (java == null) {
             return null;
         } else if (java instanceof Map) {
@@ -40,13 +55,13 @@ public class DefaultSerializer implements Serializer {
         }
     }
 
-    private Object handleObject(PojoMapper mapper, List<Object> stack, Object java) {
+    private Object handleObject(ToDocumentMapper mapper, List<Object> stack, Object java) {
         Map<String, Object> results = NodeUtils.newObject();
         handleObject(mapper, stack, java.getClass(), java, results);
         return results;
     }
 
-    private void handleObject(PojoMapper mapper, List<Object> stack, Class<?> type, Object java, Map<String, Object> results) {
+    private void handleObject(ToDocumentMapper mapper, List<Object> stack, Class<?> type, Object java, Map<String, Object> results) {
         try {
             if (!type.getSuperclass().equals(Object.class)) {
                 handleObject(mapper, stack, type.getSuperclass(), java, results);
@@ -71,7 +86,7 @@ public class DefaultSerializer implements Serializer {
         return String.valueOf(java);
     }
 
-    private Object handleArray(PojoMapper mapper, List<Object> stack, Object[] java) {
+    private Object handleArray(ToDocumentMapper mapper, List<Object> stack, Object[] java) {
         List<Object> results = NodeUtils.newArray();
         for (int t = 0; t < java.length; t++) {
             results.add(mapper.toDocument(stack, java[t]));
@@ -79,7 +94,7 @@ public class DefaultSerializer implements Serializer {
         return results;
     }
 
-    private Object handleCollection(PojoMapper mapper, List<Object> stack, Collection<Object> java) {
+    private Object handleCollection(ToDocumentMapper mapper, List<Object> stack, Collection<Object> java) {
         List<Object> results = NodeUtils.newArray();
         for (Object o : java) {
             results.add(mapper.toDocument(stack, o));
@@ -87,7 +102,7 @@ public class DefaultSerializer implements Serializer {
         return results;
     }
 
-    private Object handleMap(PojoMapper mapper, List<Object> stack, Map<Object, Object> java) {
+    private Object handleMap(ToDocumentMapper mapper, List<Object> stack, Map<Object, Object> java) {
         List<Object> results = NodeUtils.newArray();
         for (Map.Entry<Object, Object> entry : java.entrySet()) {
             Map<String, Object> e = NodeUtils.newObject();

@@ -1,7 +1,7 @@
 package nl.cad.json.transform.mapping.source;
 
 import nl.cad.json.transform.java.JavaToDocumentMapper;
-import nl.cad.json.transform.java.PojoToDocumentMapper;
+import nl.cad.json.transform.java.pojo.PojoToDocumentMapper;
 
 public class JavaSource implements DocumentSource {
 

@@ -7,9 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.java.PojoToDocumentMapper.CircularReferenceException;
-import nl.cad.json.transform.java.PojoToDocumentMapper.NoSerializerFoundException;
-import nl.cad.json.transform.java.serializers.ValueSerializer;
+import nl.cad.json.transform.java.pojo.PojoToDocumentMapper;
+import nl.cad.json.transform.java.pojo.PojoToDocumentMapper.CircularReferenceException;
+import nl.cad.json.transform.java.pojo.PojoToDocumentMapper.NoSerializerFoundException;
+import nl.cad.json.transform.java.pojo.serializers.ValueSerializer;
 
 import org.junit.Before;
 import org.junit.Test;

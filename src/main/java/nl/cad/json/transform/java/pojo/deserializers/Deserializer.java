@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.java;
+package nl.cad.json.transform.java.pojo.deserializers;
 
-/**
- * Transforms a Java object to a Map / List / Value document structure.
- */
-public interface JavaToDocumentMapper {
+import nl.cad.json.transform.java.pojo.FromDocumentMapper;
 
-    Object toDocument(Object java);
+public interface Deserializer {
+
+    boolean supports(Class<?> type);
+
+    Object toObject(FromDocumentMapper mapper, Class<?> type, Class<?> genericType, Object document);
 
 }

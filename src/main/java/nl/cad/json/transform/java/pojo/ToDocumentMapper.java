@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.java;
+package nl.cad.json.transform.java.pojo;
 
-/**
- * Transforms a Java object to a Map / List / Value document structure.
- */
-public interface JavaToDocumentMapper {
+import java.util.List;
 
-    Object toDocument(Object java);
+public interface ToDocumentMapper {
+
+    Object toDocument(List<Object> stack, Object java);
 
 }
