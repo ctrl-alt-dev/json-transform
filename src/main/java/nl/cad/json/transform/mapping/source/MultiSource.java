@@ -55,6 +55,10 @@ public final class MultiSource implements DocumentSource {
         sources.put(name, document);
     }
 
+    public void putSource(String name, DocumentSource document) {
+        sources.put(name, document);
+    }
+
     @Override
     public Object getDocument(DocumentSource input) {
         return input.getDocument(null);
@@ -70,6 +74,8 @@ public final class MultiSource implements DocumentSource {
                 } catch (InterruptedException | ExecutionException ex) {
                     throw new FutureDocumentException(ex);
                 }
+            } else if (doc instanceof DocumentSource) {
+                doc = ((DocumentSource) doc).getDocument(null);
             }
             return doc;
         }

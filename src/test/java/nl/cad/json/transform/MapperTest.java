@@ -20,8 +20,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
+import nl.cad.json.transform.java.PojoToDocumentMapperTest;
 import nl.cad.json.transform.mapping.MappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
+import nl.cad.json.transform.mapping.source.JavaSource;
 import nl.cad.json.transform.mapping.source.MultiSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.merge.MergeFactory;
@@ -154,6 +156,15 @@ public class MapperTest {
         Map<String, Object> out = NodeUtils.toObject(mb.getDocument(new ValueSource(src)));
         //
         assertEquals("{two=1}", out.toString());
+    }
+
+    @Test
+    public void shouldMapPojo() {
+        DocumentSource move = MappingBuilder.seq().move(Path.fromString("somewhere")).build();
+
+        String result = String.valueOf(move.getDocument(new JavaSource(new PojoToDocumentMapperTest.SomeType())));
+
+        assertEquals("{somewhere={value=value}}", result);
     }
 
 

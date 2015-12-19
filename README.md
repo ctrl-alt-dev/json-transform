@@ -2,6 +2,10 @@
 
 A Java centric library to do transforms and mappings on JSON documents. 
 
+## Note
+
+This framework is a proof of concept to get workable JSON mappings in Java. As such, it's API may be quite unstable while I figure out how to do it.
+
 ## Example
 
 ```java
