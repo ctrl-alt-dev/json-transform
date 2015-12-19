@@ -27,6 +27,7 @@ import java.util.Set;
 
 import nl.cad.json.transform.java.pojo.PojoFromDocumentMapper;
 import nl.cad.json.transform.java.pojo.PojoToDocumentMapper;
+import nl.cad.json.transform.java.pojo.deserializers.DefaultDeserializer.UnsupportedCollectionTypeException;
 import nl.cad.json.transform.util.NodeUtils;
 
 import org.junit.Before;
@@ -53,6 +54,10 @@ public class PojoFromDocumentMapperTest {
         public String toString() {
             return some + "|" + pojos + "|" + nested;
         }
+    }
+
+    public static class UnknownCollection {
+        private Map<String, String> map;
     }
 
     private PojoFromDocumentMapper mapper;
@@ -83,6 +88,7 @@ public class PojoFromDocumentMapperTest {
         assertArrayEquals(array, result);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldMapArrayList() {
         Map<String, Object> obj = NodeUtils.newObject();
@@ -103,6 +109,14 @@ public class PojoFromDocumentMapperTest {
         NestedObject result = mapper.toJava(NestedObject.class, doc);
 
         assertEquals("a|b|[a|b]|[null|[]|[]]", result.toString());
+    }
+
+    @Test(expected = UnsupportedCollectionTypeException.class)
+    public void shouldFailUnknownCollection() {
+        Map<String, Object> obj = NodeUtils.newObject();
+        obj.put("map", NodeUtils.newArray());
+        
+        mapper.toJava(UnknownCollection.class, obj);
     }
 
 
