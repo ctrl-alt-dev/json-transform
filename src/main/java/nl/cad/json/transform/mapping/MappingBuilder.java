@@ -36,6 +36,7 @@ import nl.cad.json.transform.transforms.IdentityTransform;
 import nl.cad.json.transform.transforms.JavaTransform;
 import nl.cad.json.transform.transforms.TemplateAdapter;
 import nl.cad.json.transform.transforms.Transform;
+import nl.cad.json.transform.transforms.convert.IsSelectionPresentTransform;
 
 /**
  * Builds mappers.
@@ -281,6 +282,16 @@ public class MappingBuilder {
      */
     public <A> MappingBuilder javaTransform(Path path, Class<A> type, JavaTransform.JavaInvoke<A> function, Select select) {
         return this.transform(path, new JavaTransform<A>(type, function), select);
+    }
+
+    /**
+     * assigns value true to the path if the selection has at least one result.
+     * @param path the path to place the boolean value.
+     * @param select the select.
+     * @return the builder.
+     */
+    public MappingBuilder exists(Path path, Select select) {
+        return this.transform(path, new IsSelectionPresentTransform(), select);
     }
 
     /**

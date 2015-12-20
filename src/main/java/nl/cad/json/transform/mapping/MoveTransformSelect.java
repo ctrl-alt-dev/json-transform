@@ -59,8 +59,12 @@ public class MoveTransformSelect implements Mapper {
     @Override
     public Map<String, Object> map(Object source) {
         List<Object> results = new ArrayList<Object>();
-        for (Map.Entry<Path, Object> sel : select.select(source).entrySet()) {
+        Map<Path, Object> selection = select.select(source);
+        for (Map.Entry<Path, Object> sel : selection.entrySet()) {
             results.add(transform.apply(sel.getKey(), sel.getValue()));
+        }
+        if (selection.isEmpty()) {
+            results.add(transform.apply(Path.root(), null));
         }
         if (isAllArray(results)) {
             return mergeArrays(results);
