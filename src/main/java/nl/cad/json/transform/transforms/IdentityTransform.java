@@ -15,6 +15,7 @@
  */
 package nl.cad.json.transform.transforms;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,18 +29,25 @@ import nl.cad.json.transform.util.NodeUtils;
 public class IdentityTransform extends AbstractVisitor implements Transform {
 
     @Override
-    public void apply(Path path, Object source, Map<String, Object> target) {
+    public Object apply(Path path, Object source) {
+        final List<Object> target = new ArrayList<Object>();
         visit(source, new Visitor() {
 
             @Override
             public void onValue(Path path, Object object) {
-                path.set(target, object);
+                if (path.isRoot()) {
+                    target.add(object);
+                } else {
+                    path.set(target.get(0), object);
+                }
             }
 
             @Override
             public void onBeginObject(Path path, Map<String, Object> map) {
-                if (!path.isRoot()) {
-                    path.set(target, NodeUtils.newObject());
+                if (path.isRoot()) {
+                    target.add(NodeUtils.newObject());
+                } else {
+                    path.set(target.get(0), NodeUtils.newObject());
                 }
             }
 
@@ -50,7 +58,11 @@ public class IdentityTransform extends AbstractVisitor implements Transform {
 
             @Override
             public void onBeginArray(Path path, List<Object> list) {
-                path.set(target, NodeUtils.newArray());
+                if (path.isRoot()) {
+                    target.add(NodeUtils.newArray());
+                } else {
+                    path.set(target.get(0), NodeUtils.newArray());
+                }
             }
 
             @Override
@@ -59,6 +71,7 @@ public class IdentityTransform extends AbstractVisitor implements Transform {
             }
 
         });
+        return target.isEmpty() ? null : target.get(0);
     }
 
 }

@@ -15,9 +15,13 @@
  */
 package nl.cad.json.transform.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.mapping.map.Mapper;
+import nl.cad.json.transform.merge.MergeFactory;
+import nl.cad.json.transform.merge.MergeStrategy;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.transforms.MoveTransform;
@@ -30,29 +34,99 @@ import nl.cad.json.transform.util.NodeUtils;
  */
 public class MoveTransformSelect implements Mapper {
 
+    public static class MixedResultSetException extends RuntimeException {
+
+    }
+
+    public static class CantMergeMultipleValuesException extends RuntimeException {
+
+    }
+
     private MoveTransform move;
     private Transform transform;
     private Select select;
+    private MergeStrategy merge;
+    private Path movePath;
 
     public MoveTransformSelect(Path path, Transform transform, Select select) {
+        this.movePath = path;
         this.move = new MoveTransform(path);
         this.transform = transform;
         this.select = select;
+        this.merge = MergeFactory.join();
     }
 
     @Override
     public Map<String, Object> map(Object source) {
-        return map(source, NodeUtils.newObject());
+        List<Object> results = new ArrayList<Object>();
+        for (Map.Entry<Path, Object> sel : select.select(source).entrySet()) {
+            results.add(transform.apply(sel.getKey(), sel.getValue()));
+        }
+        if (isAllArray(results)) {
+            return mergeArrays(results);
+        } else if (isAllObjects(results)) {
+            return joinObjects(results);
+        } else if (isAllValues(results)) {
+            return mergeValues(results);
+        } else {
+            throw new MixedResultSetException();
+        }
     }
 
-    @Override
-    public Map<String, Object> map(Object source, Map<String, Object> target) {
-        Map<String, Object> tmp = NodeUtils.newObject();
-        for (Map.Entry<Path, Object> sel : select.select(source).entrySet()) {
-            transform.apply(sel.getKey(), sel.getValue(), tmp);
+    private Map<String, Object> mergeValues(List<Object> results) {
+        if (results.size() == 1) {
+            Map<String, Object> tmp = NodeUtils.newObject();
+            movePath.set(tmp, results.get(0));
+            return tmp;
+        } else {
+            throw new CantMergeMultipleValuesException();
         }
-        move.apply(Path.root(), tmp, target);
+    }
+
+    private Map<String, Object> joinObjects(List<Object> results) {
+        Map<String, Object> tmp = NodeUtils.newObject();
+        for (Object o : results) {
+            merge.merge(o, tmp);
+        }
+        return move.apply(Path.root(), tmp);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> mergeArrays(List<Object> results) {
+        List<Object> tmp = NodeUtils.newArray();
+        for (Object o : results) {
+            tmp.addAll((List<Object>) o);
+        }
+        Map<String, Object> target = NodeUtils.newObject();
+        movePath.set(target, tmp);
         return target;
+    }
+
+    private boolean isAllValues(List<Object> results) {
+        for (Object o : results) {
+            if (!NodeUtils.isValue(o) && !NodeUtils.isNull(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isAllArray(List<Object> results) {
+        for (Object o : results) {
+            if (!NodeUtils.isArray(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isAllObjects(List<Object> results) {
+        for (Object o : results) {
+            if (!NodeUtils.isObject(o)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

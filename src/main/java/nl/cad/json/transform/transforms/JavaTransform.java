@@ -23,6 +23,7 @@ import nl.cad.json.transform.java.pojo.PojoFromDocumentMapper;
 import nl.cad.json.transform.java.pojo.PojoToDocumentMapper;
 import nl.cad.json.transform.merge.JoinMergeStrategy;
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.util.NodeUtils;
 
 /**
  * Performs a transform in Java using a function and Java types.
@@ -59,10 +60,12 @@ public class JavaTransform<A> implements Transform {
     }
 
     @Override
-    public void apply(Path path, Object source, Map<String, Object> target) {
+    public Map<String, Object> apply(Path path, Object source) {
+        Map<String, Object> target = NodeUtils.newObject();
         A javaSource = deserializer.toJava(argType, source);
         Object javaResult = function.transform(javaSource);
         Object result = serializer.toDocument(javaResult);
         join.merge(result, target);
+        return target;
     }
 }

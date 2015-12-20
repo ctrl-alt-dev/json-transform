@@ -17,8 +17,6 @@ package nl.cad.json.transform.transforms;
 
 import java.util.Map;
 
-import nl.cad.json.transform.merge.MergeFactory;
-import nl.cad.json.transform.merge.MergeStrategy;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.template.Template;
 import nl.cad.json.transform.util.NodeUtils;
@@ -29,17 +27,14 @@ import nl.cad.json.transform.util.NodeUtils;
 public class TemplateAdapter implements Transform {
 
     private Template template;
-    private MergeStrategy merge;
 
     public TemplateAdapter(Template template) {
         this.template = template;
-        this.merge = MergeFactory.join();
     }
 
     @Override
-    public void apply(Path path, Object source, Map<String, Object> target) {
-        Map<String, Object> result = template.fill(NodeUtils.toObject(source));
-        merge.merge(result, target);
+    public Map<String, Object> apply(Path path, Object source) {
+        return template.fill(NodeUtils.toObject(source));
     }
 
 }

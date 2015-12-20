@@ -49,8 +49,14 @@ public class SelectBuilder {
     }
 
     private final List<Selector> selectors = new ArrayList<Selector>();
+    private boolean one = false;
 
     protected SelectBuilder() {
+    }
+
+    public SelectBuilder one() {
+        one = true;
+        return this;
     }
 
     public SelectBuilder any() {
@@ -139,7 +145,7 @@ public class SelectBuilder {
     }
 
     public Select build() {
-        return new SelectorChain(buildComposite());
+        return one ? new SingleResultSelectorChain(buildComposite()) : new SelectorChain(buildComposite());
     }
 
     private Selector[] buildComposite() {

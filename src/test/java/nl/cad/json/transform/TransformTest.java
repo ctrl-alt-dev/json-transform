@@ -17,6 +17,7 @@ package nl.cad.json.transform;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
@@ -37,17 +38,45 @@ public class TransformTest {
         source = TestUtils.parseJson("/json/identity.json");
     }
     @Test
-    public void shouldDoIdentityTransform() {
-        Map<String, Object> dest = NodeUtils.newObject();
-        new IdentityTransform().apply(Path.root(), source, dest);
+    public void shouldDoIdentityTransformOnObject() {
+        Object dest = new IdentityTransform().apply(Path.root(), source);
         assertEquals(source, dest);
     }
 
     @Test
-    public void shouldMoveTransform() {
-        Map<String, Object> dest = NodeUtils.newObject();
-        new MoveTransform(Path.root().enter("move")).apply(Path.root(), source, dest);
+    public void shouldDoIdentityTransformOnArray() {
+        List<Object> array = NodeUtils.newArray();
+        array.add("value");
+        Object dest = new IdentityTransform().apply(Path.root(), array);
+        assertEquals(array, dest);
+    }
+
+    @Test
+    public void shouldDoIdentityTransformOnValue() {
+        String value = "value";
+        Object dest = new IdentityTransform().apply(Path.root(), value);
+        assertEquals(value, dest);
+    }
+
+    @Test
+    public void shouldMoveTransformOnObject() {
+        Map<String, Object> dest = new MoveTransform(Path.root().enter("move")).apply(Path.root(), source);
         assertEquals(source, dest.get("move"));
+    }
+
+    @Test
+    public void shouldMoveTransformOnArray() {
+        List<Object> array = NodeUtils.newArray();
+        array.add("value");
+        Map<String, Object> dest = new MoveTransform(Path.root().enter("move")).apply(Path.root(), array);
+        assertEquals(array, dest.get("move"));
+    }
+
+    @Test
+    public void shouldMoveTransformOnValue() {
+        String value = "value";
+        Map<String, Object> dest = new MoveTransform(Path.root().enter("move")).apply(Path.root(), value);
+        assertEquals(value, dest.get("move"));
     }
 
 }

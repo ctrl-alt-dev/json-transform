@@ -24,36 +24,28 @@ import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
 import nl.cad.json.transform.transforms.convert.TimestampToFormattedLocalDateTimeConversion;
 import nl.cad.json.transform.transforms.convert.ToStringValueConversion;
-import nl.cad.json.transform.util.NodeUtils;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class ConversionTest {
 
-    private Map<String, Object> target;
     private Path path = Path.root().enter("path");
-
-    @Before
-    public void init() {
-        target = NodeUtils.newObject();
-    }
 
     @Test
     public void shouldToString() {
-        new ToStringValueConversion().apply(path, Long.valueOf(42), target);
+        Map<String, Object> target = new ToStringValueConversion().apply(path, Long.valueOf(42));
         assertEquals("42", path.get(target));
     }
 
     @Test
     public void shouldToFormatTimestamp() {
-        new TimestampToFormattedLocalDateTimeConversion("yyyy-MM-dd").apply(path, Long.valueOf(0L), target);
+        Map<String, Object> target = new TimestampToFormattedLocalDateTimeConversion("yyyy-MM-dd").apply(path, Long.valueOf(0L));
         assertNotNull(path.get(target));
     }
 
     @Test
     public void shouldRenamePropertyTransform() {
-        new RenamePropertyConversion("name").apply(path, Long.valueOf(0L), target);
+        Map<String, Object> target = new RenamePropertyConversion("name").apply(path, Long.valueOf(0L));
         assertNotNull(path.parent().enter("name").get(target));
     }
 

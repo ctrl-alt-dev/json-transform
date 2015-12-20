@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestUtils {
@@ -30,6 +31,14 @@ public class TestUtils {
         try (InputStream in = TestUtils.class.getResourceAsStream(resource)) {
             return (Map<String, Object>) mapper.readValue(in, Map.class);
         } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static String renderJson(Object src) {
+        try {
+            return mapper.writeValueAsString(src);
+        } catch (JsonProcessingException ex) {
             throw new RuntimeException(ex);
         }
     }

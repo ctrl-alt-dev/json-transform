@@ -20,7 +20,6 @@ import java.util.Map;
 import nl.cad.json.transform.AbstractVisitor;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.IdentityTransform;
-import nl.cad.json.transform.util.NodeUtils;
 
 /**
  * A Callback Template takes a given JSON as a template and calls a
@@ -42,11 +41,11 @@ public class CallbackTemplate extends AbstractVisitor implements Template {
         this.idTransform = new IdentityTransform();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, Object> fill(Map<String, Object> source) {
-        Map<String, Object> target = NodeUtils.newObject();
 
-        idTransform.apply(Path.root(), template, target);
+        Map<String, Object> target = (Map<String, Object>) idTransform.apply(Path.root(), template);
 
         visit(target, new VisitorImpl() {
 

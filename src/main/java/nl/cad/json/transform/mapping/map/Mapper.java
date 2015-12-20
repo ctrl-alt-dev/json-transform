@@ -21,6 +21,4 @@ public interface Mapper {
 
     Map<String, Object> map(Object source);
 
-    Map<String, Object> map(Object source, Map<String, Object> target);
-
 }

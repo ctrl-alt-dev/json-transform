@@ -35,7 +35,8 @@ public class FlattenCompositeTransform extends AbstractVisitor implements Transf
     }
 
     @Override
-    public void apply(Path path, Object source, Map<String, Object> target) {
+    public Map<String, Object> apply(Path path, Object source) {
+        final Map<String, Object> target = NodeUtils.newObject();
         final List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
         visit(source, new VisitorImpl() {
 
@@ -63,6 +64,7 @@ public class FlattenCompositeTransform extends AbstractVisitor implements Transf
 
         });
         path.set(target, results);
+        return target;
     }
 
     private Map<String, Object> copyNonChildNodes(Map<String, Object> map) {

@@ -15,12 +15,10 @@
  */
 package nl.cad.json.transform.transforms;
 
-import java.util.Map;
-
 import nl.cad.json.transform.path.Path;
 
 public interface Transform {
 
-    void apply(Path path, Object source, Map<String, Object> target);
+    Object apply(Path path, Object source);
 
 }

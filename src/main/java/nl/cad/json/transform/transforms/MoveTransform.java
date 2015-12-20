@@ -20,6 +20,7 @@ import java.util.Map;
 import nl.cad.json.transform.AbstractVisitor;
 import nl.cad.json.transform.merge.visitor.CopyVisitor;
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.util.NodeUtils;
 
 /**
  * moves the input to the targetPath in the output.
@@ -33,9 +34,11 @@ public class MoveTransform extends AbstractVisitor implements Transform {
     }
 
     @Override
-    public void apply(Path path, Object source, Map<String, Object> target) {
+    public Map<String, Object> apply(Path path, Object source) {
+        Map<String, Object> target = NodeUtils.newObject();
         targetPath.create(target);
         visit(source, new CopyVisitor(targetPath, target));
+        return target;
     }
 
 }

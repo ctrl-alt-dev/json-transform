@@ -19,6 +19,7 @@ import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.Transform;
+import nl.cad.json.transform.util.NodeUtils;
 
 public class RenamePropertyConversion implements Transform {
 
@@ -29,9 +30,11 @@ public class RenamePropertyConversion implements Transform {
     }
 
     @Override
-    public void apply(Path path, Object source, Map<String, Object> target) {
+    public Map<String, Object> apply(Path path, Object source) {
+        Map<String, Object> target = NodeUtils.newObject();
         Path targetPath = path.parent().enter(name);
         targetPath.set(target, source);
+        return target;
     }
 
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.Transform;
+import nl.cad.json.transform.util.NodeUtils;
 
 public class TimestampToFormattedLocalDateTimeConversion implements Transform {
 
@@ -41,10 +42,12 @@ public class TimestampToFormattedLocalDateTimeConversion implements Transform {
     }
 
     @Override
-    public void apply(Path path, Object source, Map<String, Object> target) {
+    public Map<String, Object> apply(Path path, Object source) {
+        Map<String, Object> target = NodeUtils.newObject();
         long timestamp = Long.valueOf(String.valueOf(source));
         LocalDateTime localDateTime = Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDateTime();
         path.set(target, formatter.format(localDateTime));
+        return target;
     }
 
 }

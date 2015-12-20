@@ -13,21 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.select;
 
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.transforms.Transform;
-import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.select.selector.Selector;
 
-public class ToStringValueConversion implements Transform {
+public class SingleResultSelectorChain extends SelectorChain {
 
-    @Override
-    public Map<String, Object> apply(Path path, Object value) {
-        Map<String, Object> target = NodeUtils.newObject();
-        path.set(target, String.valueOf(value));
-        return target;
+    public SingleResultSelectorChain(Selector... selectors) {
+        super(selectors);
+    }
+
+    public Map<Path, Object> select(Object source) {
+        Map<Path, Object> result = new TreeMap<Path, Object>();
+        Map<Path, Object> tmp = super.select(source);
+        if (tmp.size() > 0) {
+            Entry<Path, Object> next = tmp.entrySet().iterator().next();
+            result.put(next.getKey(), next.getValue());
+        }
+        return result;
     }
 
 }
