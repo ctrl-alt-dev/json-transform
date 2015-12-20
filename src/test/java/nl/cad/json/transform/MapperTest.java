@@ -41,6 +41,19 @@ import org.junit.Test;
 
 public class MapperTest {
 
+    public static class InputPojo {
+        private String a = "a";
+    }
+
+    public static class TransformedPojo {
+        @SuppressWarnings("unused")
+        private String b = "x";
+
+        public TransformedPojo(InputPojo a) {
+            b = a.a;
+        }
+    }
+
     @Test
     public void shouldMap() {
         DocumentSource src = MappingBuilder.seq()
@@ -165,6 +178,21 @@ public class MapperTest {
         String result = String.valueOf(move.getDocument(new JavaSource(new PojoToDocumentMapperTest.SomeType())));
 
         assertEquals("{somewhere={value=value}}", result);
+    }
+
+    @Test
+    public void shouldTransformViaJava() {
+        Map<String, Object> map = NodeUtils.newObject();
+        map.put("a", "pindakaas");
+        DocumentSource java = MappingBuilder.seq().javaTransform(
+                Path.root(),
+                InputPojo.class, src -> new TransformedPojo(src),
+                SelectBuilder.select().root().build()
+                ).build();
+
+        Map<String, Object> document = NodeUtils.toObject(java.getDocument(new ValueSource(map)));
+
+        assertEquals("{b=pindakaas}", String.valueOf(document));
     }
 
 

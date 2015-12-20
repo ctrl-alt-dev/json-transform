@@ -57,6 +57,7 @@ public class PojoFromDocumentMapperTest {
     }
 
     public static class UnknownCollection {
+        @SuppressWarnings("unused")
         private Map<String, String> map;
     }
 

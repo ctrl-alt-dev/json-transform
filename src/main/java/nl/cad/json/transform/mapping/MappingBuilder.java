@@ -33,6 +33,7 @@ import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.template.Template;
 import nl.cad.json.transform.transforms.IdentityTransform;
+import nl.cad.json.transform.transforms.JavaTransform;
 import nl.cad.json.transform.transforms.TemplateAdapter;
 import nl.cad.json.transform.transforms.Transform;
 
@@ -235,6 +236,51 @@ public class MappingBuilder {
      */
     public MappingBuilder template(Path path, Template template, Select select) {
         return this.transform(path, new TemplateAdapter(template), select);
+    }
+
+    /**
+     * applies a java mapping to the input document and moves the result to the root.
+     * @param type the Java input type.
+     * @param function the function to execute.
+     * @return the builder.
+     */
+
+    public <A> MappingBuilder javaTransform(Class<A> type, JavaTransform.JavaInvoke<A> function) {
+        return this.transform(new JavaTransform<A>(type, function));
+    }
+
+    /**
+     * applies a java mapping to the input document and moves the result to the given path.
+     * @param path the path.
+     * @param type the Java input type.
+     * @param function the function to execute.
+     * @return the builder.
+     */
+    public <A> MappingBuilder javaTransform(Path path, Class<A> type, JavaTransform.JavaInvoke<A> function) {
+        return this.transform(path, new JavaTransform<A>(type, function));
+    }
+
+    /**
+     * applies a java mapping to the selection of the input document and moves the result to the root.
+     * @param type the Java input type.
+     * @param function the function to execute.
+     * @param select the selection.
+     * @return the builder.
+     */
+    public <A> MappingBuilder javaTransform(Class<A> type, JavaTransform.JavaInvoke<A> function, Select select) {
+        return this.transform(new JavaTransform<A>(type, function), select);
+    }
+
+    /**
+     * applies a java mapping to the selection of the input document and moves the result to the given path.
+     * @param path the path.
+     * @param type the Java input type.
+     * @param function the function to execute.
+     * @param select the selection.
+     * @return the builder.
+     */
+    public <A> MappingBuilder javaTransform(Path path, Class<A> type, JavaTransform.JavaInvoke<A> function, Select select) {
+        return this.transform(path, new JavaTransform<A>(type, function), select);
     }
 
     /**
