@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.merge.visitor;
+package nl.cad.json.transform.visitor.impl;
 
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.AbstractVisitor.Visitor;
+import nl.cad.json.transform.merge.MergeStrategyException;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.visitor.AbstractVisitor;
+import nl.cad.json.transform.visitor.AbstractVisitor.Visitor;
 
-public final class CopyVisitor implements Visitor {
+public final class MergeVisitor implements Visitor {
 
-    private final Map<String, Object> target;
     private Path copyPath;
+    private Map<String, Object> target;
 
-    public CopyVisitor(Path copyPath, Map<String, Object> target) {
+    public MergeVisitor(Path targetPath, Map<String, Object> target) {
+        this.copyPath = targetPath;
         this.target = target;
-        this.copyPath = copyPath;
     }
 
     @Override
@@ -50,14 +52,22 @@ public final class CopyVisitor implements Visitor {
     @Override
     public void onBeginObject(Path path, Map<String, Object> map) {
         copyPath = copyPath.enter(path);
-        if (!copyPath.isRoot()) {
+        Object currentValue = copyPath.get(target);
+        if (NodeUtils.isNull(currentValue)) {
             copyPath.set(target, NodeUtils.newObject());
+        } else if (!NodeUtils.isObject(currentValue)) {
+            throw new MergeStrategyException(path);
         }
     }
 
     @Override
     public void onBeginArray(Path path, List<Object> list) {
         copyPath = copyPath.enter(path);
-        copyPath.set(target, NodeUtils.newArray());
+        Object currentValue = copyPath.get(target);
+        if (NodeUtils.isNull(currentValue)) {
+            copyPath.set(target, NodeUtils.newArray());
+        } else if (!NodeUtils.isArray(currentValue)) {
+            throw new MergeStrategyException(path);
+        }
     }
 }

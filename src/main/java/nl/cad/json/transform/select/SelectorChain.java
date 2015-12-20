@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import nl.cad.json.transform.AbstractVisitor;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.select.selector.Selector;
+import nl.cad.json.transform.visitor.AbstractVisitor;
 
 public class SelectorChain extends AbstractVisitor implements Select {
 

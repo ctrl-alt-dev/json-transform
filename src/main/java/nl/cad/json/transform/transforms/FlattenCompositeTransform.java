@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.AbstractVisitor;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.visitor.AbstractVisitor;
 
 /**
  * Recursively flattens an array of objects containing a named property containing an array of objects.

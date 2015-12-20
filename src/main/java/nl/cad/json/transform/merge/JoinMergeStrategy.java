@@ -17,10 +17,10 @@ package nl.cad.json.transform.merge;
 
 import java.util.Map;
 
-import nl.cad.json.transform.AbstractVisitor;
-import nl.cad.json.transform.merge.visitor.MergeVisitor;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.visitor.AbstractVisitor;
+import nl.cad.json.transform.visitor.impl.MergeVisitor;
 
 /**
  * attempts to join the various sources into the destination at the given path.

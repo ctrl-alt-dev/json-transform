@@ -15,13 +15,9 @@
  */
 package nl.cad.json.transform.transforms;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import nl.cad.json.transform.AbstractVisitor;
 import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.visitor.AbstractVisitor;
+import nl.cad.json.transform.visitor.impl.IdentityVisitor;
 
 /**
  * copies the input to the output.
@@ -30,48 +26,9 @@ public class IdentityTransform extends AbstractVisitor implements Transform {
 
     @Override
     public Object apply(Path path, Object source) {
-        final List<Object> target = new ArrayList<Object>();
-        visit(source, new Visitor() {
-
-            @Override
-            public void onValue(Path path, Object object) {
-                if (path.isRoot()) {
-                    target.add(object);
-                } else {
-                    path.set(target.get(0), object);
-                }
-            }
-
-            @Override
-            public void onBeginObject(Path path, Map<String, Object> map) {
-                if (path.isRoot()) {
-                    target.add(NodeUtils.newObject());
-                } else {
-                    path.set(target.get(0), NodeUtils.newObject());
-                }
-            }
-
-            @Override
-            public void onEndObject(Path path, Map<String, Object> map) {
-                // Nop
-            }
-
-            @Override
-            public void onBeginArray(Path path, List<Object> list) {
-                if (path.isRoot()) {
-                    target.add(NodeUtils.newArray());
-                } else {
-                    path.set(target.get(0), NodeUtils.newArray());
-                }
-            }
-
-            @Override
-            public void onEndArray(Path path, List<Object> list) {
-                // Nop
-            }
-
-        });
-        return target.isEmpty() ? null : target.get(0);
+        IdentityVisitor visitor = new IdentityVisitor();
+        visit(source, visitor);
+        return visitor.getTarget();
     }
 
 }

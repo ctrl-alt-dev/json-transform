@@ -17,9 +17,9 @@ package nl.cad.json.transform.merge;
 
 import java.util.Map;
 
-import nl.cad.json.transform.AbstractVisitor;
-import nl.cad.json.transform.merge.visitor.CopyVisitor;
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.visitor.AbstractVisitor;
+import nl.cad.json.transform.visitor.impl.CopyVisitor;
 
 /**
  * will copy the source onto the target path, erasing any existing nodes.

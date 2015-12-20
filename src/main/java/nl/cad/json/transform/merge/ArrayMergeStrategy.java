@@ -18,10 +18,10 @@ package nl.cad.json.transform.merge;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.AbstractVisitor;
-import nl.cad.json.transform.merge.visitor.CopyVisitor;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.visitor.AbstractVisitor;
+import nl.cad.json.transform.visitor.impl.CopyVisitor;
 
 /**
  * constructs an array at the target node and inserts any source objects as elements.

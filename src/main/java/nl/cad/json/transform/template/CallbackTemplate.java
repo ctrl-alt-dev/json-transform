@@ -17,9 +17,9 @@ package nl.cad.json.transform.template;
 
 import java.util.Map;
 
-import nl.cad.json.transform.AbstractVisitor;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.IdentityTransform;
+import nl.cad.json.transform.visitor.AbstractVisitor;
 
 /**
  * A Callback Template takes a given JSON as a template and calls a
