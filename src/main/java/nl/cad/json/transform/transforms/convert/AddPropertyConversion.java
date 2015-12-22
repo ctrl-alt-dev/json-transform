@@ -13,38 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping;
+package nl.cad.json.transform.transforms.convert;
 
 import nl.cad.json.transform.path.ValuePath;
-import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.transforms.ValuePathTransform;
+import nl.cad.json.transform.util.NodeUtils;
 
-public class TransformSelect {
+public class AddPropertyConversion implements ValuePathTransform {
 
-    private ValuePathTransform transform;
-    private Select select;
-    private boolean post;
+    private String property;
+    private Object value;
 
-    public TransformSelect(ValuePathTransform transform, Select select) {
-        this(transform, select, false);
+    public AddPropertyConversion(String property, Object value) {
+        this.property = property;
+        this.value = value;
     }
 
-    public TransformSelect(ValuePathTransform transform, Select select, boolean post) {
-        this.transform = transform;
-        this.select = select;
-        this.post = post;
-    }
-
-    public boolean isPost() {
-        return post;
-    }
-
-    public boolean isMatch(ValuePath path) {
-        return select.isMatch(path);
-    }
-
+    @Override
     public void apply(ValuePath source, ValuePath target) {
-        transform.apply(source, target);
+        NodeUtils.toObject(target.get()).put(property, value);
     }
 
 }

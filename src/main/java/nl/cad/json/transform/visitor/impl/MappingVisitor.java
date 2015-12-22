@@ -46,6 +46,7 @@ public class MappingVisitor implements ValuePathVisitor {
 
     @Override
     public void onEndObject(ValuePath source, ValuePath target) {
+        applyPostTransformSelects(source, target);
     }
 
     @Override
@@ -55,13 +56,21 @@ public class MappingVisitor implements ValuePathVisitor {
 
     private boolean applyTransformSelects(ValuePath source, ValuePath target, Object def) {
         for (TransformSelect pair : selects) {
-            if (pair.isMatch(source)) {
+            if (!pair.isPost() && pair.isMatch(source)) {
                 pair.apply(source, target);
                 return false;
             }
         }
         target.set(def);
         return true;
+    }
+
+    private void applyPostTransformSelects(ValuePath source, ValuePath target) {
+        for (TransformSelect pair : selects) {
+            if (pair.isPost() && pair.isMatch(source)) {
+                pair.apply(source, target);
+            }
+        }
     }
 
 }

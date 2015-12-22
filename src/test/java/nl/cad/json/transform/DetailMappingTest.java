@@ -43,6 +43,7 @@ public class DetailMappingTest {
                 .rename("to", "from")
                 .rename("class", "type")
                 .overwrite("overwrite", "some", "censored")
+                .add("added", Boolean.TRUE)
                 .build();
         List<TransformSelect> nrMapping = DetailMappingBuilder.map()
                 .rename("nr", "number")
@@ -64,7 +65,7 @@ public class DetailMappingTest {
         Object result = build.getDocument(new ValueSource(source));
 
         assertEquals(
-                "[{class=Item, overwrite=censored, to=pindakaas}, {children=[{children=[{class=Item, to=wodkasju}], class=Number}], class=Number, nr=758}]",
+                "[{added=true, class=Item, overwrite=censored, to=pindakaas}, {children=[{children=[{added=true, class=Item, to=wodkasju}], class=Number}], class=Number, nr=758}]",
                 String.valueOf(result));
     }
 

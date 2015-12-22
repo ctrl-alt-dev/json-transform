@@ -22,6 +22,7 @@ import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.ValuePathTransform;
+import nl.cad.json.transform.transforms.convert.AddPropertyConversion;
 import nl.cad.json.transform.transforms.convert.DeleteNodeConversion;
 import nl.cad.json.transform.transforms.convert.OverwriteValueConversion;
 import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
@@ -44,6 +45,11 @@ public class DetailMappingBuilder {
 
     public DetailMappingBuilder mapping(ValuePathTransform transform, Select select) {
         transformSelects.add(new TransformSelect(transform, select));
+        return this;
+    }
+
+    public DetailMappingBuilder postMapping(ValuePathTransform transform, Select select) {
+        transformSelects.add(new TransformSelect(transform, select, true));
         return this;
     }
 
@@ -86,6 +92,10 @@ public class DetailMappingBuilder {
 
     public DetailMappingBuilder delete(String property) {
         return mapping(new DeleteNodeConversion(), SelectBuilder.select().property(property).build());
+    }
+
+    public DetailMappingBuilder add(String property, Object value) {
+        return postMapping(new AddPropertyConversion(property, value), SelectBuilder.selectRoot());
     }
 
 }
