@@ -19,6 +19,6 @@ import java.util.Map;
 
 public interface MergeStrategy {
 
-    void merge(Object source, Map<String, Object> destinationRoot);
+    Object merge(Object source, Map<String, Object> targetRoot);
 
 }

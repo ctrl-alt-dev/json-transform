@@ -15,65 +15,41 @@
  */
 package nl.cad.json.transform.visitor.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.util.NodeUtils;
-import nl.cad.json.transform.visitor.AbstractVisitor.Visitor;
+import nl.cad.json.transform.visitor.AbstractVisitor.ValuePathVisitor;
 
 /**
  * Makes a copy of the visited object.
  * The root object can be an object, array or value.
  */
-public class IdentityVisitor implements Visitor {
+public class IdentityVisitor implements ValuePathVisitor {
 
-    private final List<Object> target;
-
-    public IdentityVisitor() {
-        this.target = new ArrayList<Object>();
+    @Override
+    public boolean onBeginArray(ValuePath source, ValuePath target) {
+        target.set(NodeUtils.newArray());
+        return true;
     }
 
     @Override
-    public void onValue(Path path, Object object) {
-        if (path.isRoot()) {
-            target.add(object);
-        } else {
-            path.set(target.get(0), object);
-        }
-    }
-
-    @Override
-    public void onBeginObject(Path path, Map<String, Object> map) {
-        if (path.isRoot()) {
-            target.add(NodeUtils.newObject());
-        } else {
-            path.set(target.get(0), NodeUtils.newObject());
-        }
-    }
-
-    @Override
-    public void onEndObject(Path path, Map<String, Object> map) {
+    public void onEndArray(ValuePath source, ValuePath target) {
         // Nop
     }
 
     @Override
-    public void onBeginArray(Path path, List<Object> list) {
-        if (path.isRoot()) {
-            target.add(NodeUtils.newArray());
-        } else {
-            path.set(target.get(0), NodeUtils.newArray());
-        }
+    public boolean onBeginObject(ValuePath source, ValuePath target) {
+        target.set(NodeUtils.newObject());
+        return true;
     }
 
     @Override
-    public void onEndArray(Path path, List<Object> list) {
+    public void onEndObject(ValuePath source, ValuePath target) {
         // Nop
     }
 
-    public Object getTarget() {
-        return target.isEmpty() ? null : target.get(0);
+    @Override
+    public void onValue(ValuePath source, ValuePath target) {
+        target.set(source.value());
     }
 
 }

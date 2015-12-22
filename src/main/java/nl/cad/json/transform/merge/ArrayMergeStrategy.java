@@ -21,7 +21,7 @@ import java.util.Map;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
 import nl.cad.json.transform.visitor.AbstractVisitor;
-import nl.cad.json.transform.visitor.impl.CopyVisitor;
+import nl.cad.json.transform.visitor.impl.IdentityVisitor;
 
 /**
  * constructs an array at the target node and inserts any source objects as elements.
@@ -36,7 +36,7 @@ public class ArrayMergeStrategy extends AbstractVisitor implements MergeStrategy
 
     @SuppressWarnings("unchecked")
     @Override
-    public void merge(Object source, Map<String, Object> target) {
+    public Object merge(Object source, Map<String, Object> target) {
         Object value = targetPath.get(target);
         if (NodeUtils.isNull(value)) {
             targetPath.create(target);
@@ -46,7 +46,8 @@ public class ArrayMergeStrategy extends AbstractVisitor implements MergeStrategy
         if (NodeUtils.isArray(value)) {
             List<Object> array = (List<Object>) value;
             final Path destinationRoot = targetPath.enter(array.size()).create(target);
-            visit(source, new CopyVisitor(destinationRoot, target));
+            Object result = visit(source, new IdentityVisitor());
+            return destinationRoot.set(target, result);
         } else {
             throw new MergeStrategyException(targetPath);
         }

@@ -26,9 +26,7 @@ public class IdentityTransform extends AbstractVisitor implements Transform {
 
     @Override
     public Object apply(Path path, Object source) {
-        IdentityVisitor visitor = new IdentityVisitor();
-        visit(source, visitor);
-        return visitor.getTarget();
+        return visit(source, new IdentityVisitor());
     }
 
 }

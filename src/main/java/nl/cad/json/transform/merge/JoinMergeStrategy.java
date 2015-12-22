@@ -34,11 +34,18 @@ public class JoinMergeStrategy extends AbstractVisitor implements MergeStrategy 
     }
 
     @Override
-    public void merge(Object source, Map<String, Object> target) {
+    public Object merge(Object source, Map<String, Object> target) {
         if (NodeUtils.isNull(targetPath.get(target))) {
             targetPath.create(target);
+            Object result = visit(source, new MergeVisitor());
+            targetPath.set(target, result);
+            return target;
+        } else {
+            Object root = targetPath.get(target);
+            Object result = visit(source, new MergeVisitor(), root);
+            targetPath.set(target, result);
+            return target;
         }
-        visit(source, new MergeVisitor(targetPath, target));
     }
 
 }

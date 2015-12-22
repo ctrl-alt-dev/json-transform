@@ -82,10 +82,9 @@ public class MergeTest {
         MergeStrategy merge = MergeFactory.overwrite(Path.root());
         Map<String, Object> target = NodeUtils.newObject();
 
-        merge.merge(TestUtils.parseJson("/json/one.json"), target);
-        merge.merge(TestUtils.parseJson("/json/two.json"), target);
+        target = NodeUtils.toObject(merge.merge(TestUtils.parseJson("/json/one.json"), target));
+        target = NodeUtils.toObject(merge.merge(TestUtils.parseJson("/json/two.json"), target));
 
-        assertEquals(Integer.valueOf(1), target.get("one")); // TODO: This is slightly unexpected.
         assertEquals(Integer.valueOf(2), target.get("two"));
     }
 

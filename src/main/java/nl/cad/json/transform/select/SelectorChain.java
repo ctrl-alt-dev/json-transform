@@ -36,45 +36,42 @@ public class SelectorChain extends AbstractVisitor implements Select {
 
     public Map<Path, Object> select(Object source) {
         final Map<Path, Object> matches = new TreeMap<Path, Object>();
-        visit(source, new Visitor() {
-
-            final List<Object> pathValues=new ArrayList<Object>();
-
+        visit(source, new ValuePathVisitor() {
+            
             @Override
-            public void onValue(Path path, Object object) {
-                pathValues.add(object);
-                if (isMatch(path, pathValues)) {
-                    matches.put(path, object);
-                }
-                pathValues.remove(pathValues.size() - 1);
-            }
-
-            @Override
-            public void onBeginObject(Path path, Map<String, Object> map) {
-                pathValues.add(map);
-                if (isMatch(path, pathValues)) {
-                    matches.put(path, map);
+            public void onValue(ValuePath source, ValuePath target) {
+                if (isMatch(source)) {
+                    matches.put(source.path(), source.value());
                 }
             }
-
+            
             @Override
-            public void onEndObject(Path path, Map<String, Object> map) {
-                pathValues.remove(pathValues.size() - 1);
+            public void onEndObject(ValuePath source, ValuePath target) {
+                // TODO Auto-generated method stub
+                
             }
-
+            
             @Override
-            public void onBeginArray(Path path, List<Object> list) {
-                pathValues.add(list);
-                if (isMatch(path, pathValues)) {
-                    matches.put(path, list);
+            public void onEndArray(ValuePath source, ValuePath target) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public boolean onBeginObject(ValuePath source, ValuePath target) {
+                if (isMatch(source)) {
+                    matches.put(source.path(), source.value());
                 }
+                return true;
             }
-
+            
             @Override
-            public void onEndArray(Path path, List<Object> list) {
-                pathValues.remove(pathValues.size() - 1);
+            public boolean onBeginArray(ValuePath source, ValuePath target) {
+                if (isMatch(source)) {
+                    matches.put(source.path(), source.value());
+                }
+                return true;
             }
-
         });
         return matches;
     }

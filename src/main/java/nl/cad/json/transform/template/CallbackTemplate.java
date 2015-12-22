@@ -18,6 +18,7 @@ package nl.cad.json.transform.template;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.IdentityTransform;
 import nl.cad.json.transform.visitor.AbstractVisitor;
 
@@ -43,22 +44,24 @@ public class CallbackTemplate extends AbstractVisitor implements Template {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Object> fill(Map<String, Object> source) {
+    public Map<String, Object> fill(Map<String, Object> src) {
 
-        Map<String, Object> target = (Map<String, Object>) idTransform.apply(Path.root(), template);
+        final Map<String, Object> dst = (Map<String, Object>) idTransform.apply(Path.root(), template);
 
-        visit(target, new VisitorImpl() {
+        visit(dst, new ValuePathVisitorImpl() {
 
             @Override
-            public void onValue(Path path, Object object) {
+            public void onValue(ValuePath source, ValuePath target) {
+                Object object = source.value();
+                Path path = source.path();
                 if (handler.supports(object)) {
-                    Object result = handler.handle(path, object, source);
-                    path.set(target, result);
+                    Object result = handler.handle(path, object, src);
+                    target.path().set(dst, result);
                 }
             }
 
         });
-        return target;
+        return dst;
     }
 
 }

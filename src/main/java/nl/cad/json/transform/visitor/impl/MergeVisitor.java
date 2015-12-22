@@ -15,58 +15,48 @@
  */
 package nl.cad.json.transform.visitor.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import nl.cad.json.transform.merge.MergeStrategyException;
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.util.NodeUtils;
-import nl.cad.json.transform.visitor.AbstractVisitor.Visitor;
+import nl.cad.json.transform.visitor.AbstractVisitor.ValuePathVisitor;
 
-public final class MergeVisitor implements Visitor {
-
-    private Path copyPath;
-    private Map<String, Object> target;
-
-    public MergeVisitor(Path targetPath, Map<String, Object> target) {
-        this.copyPath = targetPath;
-        this.target = target;
-    }
+public final class MergeVisitor implements ValuePathVisitor {
 
     @Override
-    public void onValue(Path path, Object object) {
-        copyPath.enter(path).set(target, object);
-    }
-
-    @Override
-    public void onEndObject(Path path, Map<String, Object> map) {
-        copyPath = copyPath.leave();
-    }
-
-    @Override
-    public void onEndArray(Path path, List<Object> list) {
-        copyPath = copyPath.leave();
-    }
-
-    @Override
-    public void onBeginObject(Path path, Map<String, Object> map) {
-        copyPath = copyPath.enter(path);
-        Object currentValue = copyPath.get(target);
+    public boolean onBeginArray(ValuePath source, ValuePath target) {
+        Object currentValue = target.get();
         if (NodeUtils.isNull(currentValue)) {
-            copyPath.set(target, NodeUtils.newObject());
-        } else if (!NodeUtils.isObject(currentValue)) {
-            throw new MergeStrategyException(path);
-        }
-    }
-
-    @Override
-    public void onBeginArray(Path path, List<Object> list) {
-        copyPath = copyPath.enter(path);
-        Object currentValue = copyPath.get(target);
-        if (NodeUtils.isNull(currentValue)) {
-            copyPath.set(target, NodeUtils.newArray());
+            target.set(NodeUtils.newArray());
         } else if (!NodeUtils.isArray(currentValue)) {
-            throw new MergeStrategyException(path);
+            throw new MergeStrategyException(target.path());
         }
+        return true;
     }
+
+    @Override
+    public void onEndArray(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
+    public boolean onBeginObject(ValuePath source, ValuePath target) {
+        Object currentValue = target.get();
+        if (NodeUtils.isNull(currentValue)) {
+            target.set(NodeUtils.newObject());
+        } else if (!NodeUtils.isObject(currentValue)) {
+            throw new MergeStrategyException(target.path());
+        }
+        return true;
+    }
+
+    @Override
+    public void onEndObject(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
+    public void onValue(ValuePath source, ValuePath target) {
+        target.set(source.value());
+    }
+
 }

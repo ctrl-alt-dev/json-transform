@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.util.NodeUtils;
 import nl.cad.json.transform.visitor.AbstractVisitor;
 
@@ -38,12 +39,13 @@ public class FlattenCompositeTransform extends AbstractVisitor implements Transf
     public Map<String, Object> apply(Path path, Object source) {
         final Map<String, Object> target = NodeUtils.newObject();
         final List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
-        visit(source, new VisitorImpl() {
+        visit(source, new ValuePathVisitorImpl() {
 
             private List<Map<String, Object>> aggregates = new ArrayList<Map<String, Object>>();
 
             @Override
-            public void onBeginObject(Path path, Map<String, Object> map) {
+            public boolean onBeginObject(ValuePath source, ValuePath target) {
+                Map<String, Object> map = NodeUtils.toObject(source.value());
                 Map<String, Object> tmp = copyNonChildNodes(map);
                 if (hasChildren(map)) {
                     aggregates.add(tmp);
@@ -53,11 +55,12 @@ public class FlattenCompositeTransform extends AbstractVisitor implements Transf
                     }
                     results.add(tmp);
                 }
+                return true;
             }
 
             @Override
-            public void onEndObject(Path path, Map<String, Object> map) {
-                if (hasChildren(map)) {
+            public void onEndObject(ValuePath source, ValuePath target) {
+                if (hasChildren(NodeUtils.toObject(source.value()))) {
                     aggregates.remove(aggregates.size() - 1);
                 }
             }

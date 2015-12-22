@@ -18,23 +18,10 @@ package nl.cad.json.transform.visitor;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.util.NodeUtils;
 
 public class AbstractVisitor {
-
-    public interface Visitor {
-        void onBeginArray(Path path, List<Object> list);
-
-        void onEndArray(Path path, List<Object> list);
-
-        void onBeginObject(Path path, Map<String, Object> map);
-
-        void onEndObject(Path path, Map<String, Object> map);
-
-        void onValue(Path path, Object object);
-    }
 
     public interface ValuePathVisitor {
         boolean onBeginArray(ValuePath source, ValuePath target);
@@ -48,41 +35,44 @@ public class AbstractVisitor {
         void onValue(ValuePath source, ValuePath target);
     }
 
-    public abstract static class VisitorImpl implements Visitor {
+    public abstract static class ValuePathVisitorImpl implements ValuePathVisitor {
         @Override
-        public void onBeginArray(Path path, List<Object> list) {
+        public boolean onBeginArray(ValuePath source, ValuePath target) {
+            return true;
         }
 
         @Override
-        public void onBeginObject(Path path, Map<String, Object> map) {
+        public void onEndArray(ValuePath source, ValuePath target) {
+            // NOP
         }
 
         @Override
-        public void onEndArray(Path path, List<Object> list) {
+        public boolean onBeginObject(ValuePath source, ValuePath target) {
+            return true;
         }
 
         @Override
-        public void onEndObject(Path path, Map<String, Object> map) {
+        public void onEndObject(ValuePath source, ValuePath target) {
+            // NOP
         }
 
         @Override
-        public void onValue(Path path, Object object) {
+        public void onValue(ValuePath source, ValuePath target) {
+            // NOP
         }
-
     }
 
-    public void visit(Object node, Visitor v) {
-        System.out.println(v + " : " + node);
-        this.doVisit(v, Path.root(), node);
-    }
-
-    public Object visit(Object node, ValuePathVisitor v) {
+    public Object visit(Object node, ValuePathVisitor v, Object targetNode) {
         System.out.println(v + " vp: " + node);
         ValuePath source = new ValuePath(node);
-        ValuePath target = new ValuePath(null);
+        ValuePath target = new ValuePath(targetNode);
         this.doVisit(v, source, target);
         System.out.println(v + " vp:-> " + target.value());
         return target.value();
+    }
+
+    public Object visit(Object node, ValuePathVisitor v) {
+        return visit(node, v, null);
     }
 
     private void doVisit(ValuePathVisitor v, ValuePath source, ValuePath target) {
@@ -122,36 +112,6 @@ public class AbstractVisitor {
             }
         }
         v.onEndObject(source, target);
-    }
-
-    private void visit(Path path, Map<String, Object> node, Visitor v) {
-        v.onBeginObject(path, node);
-        for (Map.Entry<String, Object> elem : node.entrySet()) {
-            Path next = path.enter(elem.getKey());
-            Object value = elem.getValue();
-            doVisit(v, next, value);
-        }
-        v.onEndObject(path, node);
-    }
-
-    private void visit(Path path, List<Object> node, Visitor v) {
-        v.onBeginArray(path, node);
-        for (Object value : node) {
-            Path next = path.enter(node.indexOf(value));
-            doVisit(v, next, value);
-        }
-        v.onEndArray(path, node);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void doVisit(Visitor v, Path next, Object value) {
-        if (value instanceof Map) {
-            this.visit(next, (Map<String, Object>) value, v);
-        } else if (value instanceof List) {
-            this.visit(next, (List<Object>) value, v);
-        } else {
-            v.onValue(next, value);
-        }
     }
     
 }
