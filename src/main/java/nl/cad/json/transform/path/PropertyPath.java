@@ -62,9 +62,10 @@ public class PropertyPath extends Path {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void set(Object root, Object x) {
+    public Object set(final Object root, Object x) {
         Map<String, Object> obj = (Map<String, Object>) this.parent().get(root);
         obj.put(property, x);
+        return root;
     }
 
     protected StringBuilder toStringBuilder() {

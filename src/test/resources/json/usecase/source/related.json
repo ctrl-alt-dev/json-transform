@@ -1,0 +1,14 @@
+{
+    "related": [
+        {
+            "articleId":"1024",
+            "title":"Some Title",
+            "intro":"Some Intro"
+        },
+        {
+            "articleId":"1025",
+            "title":"Another Title",
+            "intro":"Another Intro"
+        }
+    ]
+}

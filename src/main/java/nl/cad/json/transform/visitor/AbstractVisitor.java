@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.util.NodeUtils;
 
 public class AbstractVisitor {
 
@@ -32,6 +34,18 @@ public class AbstractVisitor {
         void onEndObject(Path path, Map<String, Object> map);
 
         void onValue(Path path, Object object);
+    }
+
+    public interface ValuePathVisitor {
+        boolean onBeginArray(ValuePath source, ValuePath target);
+
+        void onEndArray(ValuePath source, ValuePath target);
+
+        boolean onBeginObject(ValuePath source, ValuePath target);
+
+        void onEndObject(ValuePath source, ValuePath target);
+
+        void onValue(ValuePath source, ValuePath target);
     }
 
     public abstract static class VisitorImpl implements Visitor {
@@ -58,7 +72,56 @@ public class AbstractVisitor {
     }
 
     public void visit(Object node, Visitor v) {
+        System.out.println(v + " : " + node);
         this.doVisit(v, Path.root(), node);
+    }
+
+    public Object visit(Object node, ValuePathVisitor v) {
+        System.out.println(v + " vp: " + node);
+        ValuePath source = new ValuePath(node);
+        ValuePath target = new ValuePath(null);
+        this.doVisit(v, source, target);
+        System.out.println(v + " vp:-> " + target.value());
+        return target.value();
+    }
+
+    private void doVisit(ValuePathVisitor v, ValuePath source, ValuePath target) {
+        System.out.println(v + " " + source + " .. " + target);
+        if (NodeUtils.isObject(source.value())) {
+            visitObject(v, source, target);
+        } else if (NodeUtils.isArray(source.value())) {
+            visitArray(v, source, target);
+        } else {
+            visitValue(v, source, target);
+        }
+        System.out.println(v + " " + source + " -> " + target);
+    }
+
+    private void visitValue(ValuePathVisitor v, ValuePath source, ValuePath target) {
+        v.onValue(source, target);
+    }
+
+    private void visitArray(ValuePathVisitor v, ValuePath source, ValuePath target) {
+        if (v.onBeginArray(source, target)) {
+            List<Object> array = NodeUtils.toArray(source.value());
+            for (Object value : array) {
+                ValuePath nextSource = source.enter(source.path().enter(array.indexOf(value)), value);
+                ValuePath nextTarget = target.enter(target.path().enter(array.indexOf(value)), null);
+                doVisit(v, nextSource, nextTarget);
+            }
+        }
+        v.onEndArray(source, target);
+    }
+
+    private void visitObject(ValuePathVisitor v, ValuePath source, ValuePath target) {
+        if (v.onBeginObject(source, target)) {
+            for (Map.Entry<String, Object> elem : NodeUtils.toObject(source.value()).entrySet()) {
+                ValuePath nextSource = source.enter(source.path().enter(elem.getKey()), elem.getValue());
+                ValuePath nextTarget = target.enter(target.path().enter(elem.getKey()), null);
+                doVisit(v, nextSource, nextTarget);
+            }
+        }
+        v.onEndObject(source, target);
     }
 
     private void visit(Path path, Map<String, Object> node, Visitor v) {

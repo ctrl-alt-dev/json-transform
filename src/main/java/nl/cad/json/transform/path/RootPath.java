@@ -48,8 +48,8 @@ public class RootPath extends Path {
     }
 
     @Override
-    public void set(Object root, Object x) {
-        throw new UnsupportedOperationException();
+    public Object set(Object root, Object object) {
+        return object;
     }
 
     @Override

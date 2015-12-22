@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping.map;
+package nl.cad.json.transform.transforms;
 
+import nl.cad.json.transform.path.ValuePath;
 
-public interface Mapper {
+public interface ValuePathTransform {
 
-    Object map(Object source);
+    void apply(ValuePath source, ValuePath target);
 
 }

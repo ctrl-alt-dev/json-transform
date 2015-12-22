@@ -32,7 +32,6 @@ import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.template.CallbackTemplate;
 import nl.cad.json.transform.template.handler.SelectHandler;
 import nl.cad.json.transform.transforms.FlattenCompositeTransform;
-import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
 import nl.cad.json.transform.transforms.convert.ToStringValueConversion;
 import nl.cad.json.transform.util.NodeUtils;
 import nl.cad.json.transform.utils.TestUtils;
@@ -158,17 +157,6 @@ public class MapperTest {
                 "{results={a=some-value}, value=nasigoreng}",
                 ds.getDocument(new ValueSource(source)).toString());
 
-    }
-
-    @Test
-    public void shouldRenameProperty() {
-        DocumentSource mb = MappingBuilder.seq()
-                .transform(new RenamePropertyConversion("two"), SelectBuilder.fromString("property(\"one\")")).build();
-        //
-        Map<String, Object> src = TestUtils.parseJson("/json/one.json");
-        Map<String, Object> out = NodeUtils.toObject(mb.getDocument(new ValueSource(src)));
-        //
-        assertEquals("{two=1}", out.toString());
     }
 
     @Test

@@ -58,13 +58,14 @@ public class IndexPath extends Path {
     }
 
     @SuppressWarnings("unchecked")
-    public void set(Object root, Object x) {
+    public Object set(final Object root, Object x) {
         Object node = this.parent().get(root);
         List<Object> obj = (List<Object>) node;
         while (obj.size() <= index) {
             obj.add(null);
         }
         obj.set(index, x);
+        return root;
     }
 
     protected StringBuilder toStringBuilder() {

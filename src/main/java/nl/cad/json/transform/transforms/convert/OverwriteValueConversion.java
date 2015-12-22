@@ -13,11 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping.map;
+package nl.cad.json.transform.transforms.convert;
 
+import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.transforms.ValuePathTransform;
 
-public interface Mapper {
+public class OverwriteValueConversion implements ValuePathTransform {
 
-    Object map(Object source);
+    private Object value;
+
+    public OverwriteValueConversion(Object value) {
+        this.value = value;
+    }
+
+    @Override
+    public void apply(ValuePath source, ValuePath target) {
+        target.set(value);
+    }
 
 }

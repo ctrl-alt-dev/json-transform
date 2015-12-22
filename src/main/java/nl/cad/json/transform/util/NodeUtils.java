@@ -80,5 +80,41 @@ public final class NodeUtils {
         return new ArrayList<Object>();
     }
 
+    public static Object newInstanceOf(Object source) {
+        if (isArray(source)) {
+            return newArray();
+        } else if (isObject(source)) {
+            return newObject();
+        } else {
+            return source;
+        }
+    }
+
+    public static boolean isAllValues(List<Object> results) {
+        for (Object o : results) {
+            if (!NodeUtils.isValue(o) && !NodeUtils.isNull(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAllArray(List<Object> results) {
+        for (Object o : results) {
+            if (!NodeUtils.isArray(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAllObjects(List<Object> results) {
+        for (Object o : results) {
+            if (!NodeUtils.isObject(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

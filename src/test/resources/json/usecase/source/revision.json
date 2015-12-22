@@ -1,0 +1,74 @@
+{
+  "version": {
+    "major" : 1,
+    "minor" : 42
+  },  
+  "publicationDate":"0",
+  "lastUpdateDate":"0",
+  "rootContainer": [
+    {
+        "type":"TITLE",
+        "text":"This a Title"
+    },
+    {
+        "type":"INTRO",
+        "text":"This is an Intro"
+    },
+    {
+        "type":"CONTAINER",
+        "orientation":"VERTICAL",
+        "components": [
+            {
+                "type":"SUBTITLE",
+                "text":"Sub title"
+            },
+            {
+                "type":"PARAGRAPH",
+                "text":"Lorem Ipsum"
+            },
+            {
+                "type":"PHOTO",
+                "id":"1024",
+                "credit": "Someone",
+                "crop": [
+                    {
+                        "x":1,
+                        "y":2,
+                        "w":3,
+                        "h":4
+                    }
+                ]
+            },
+            {
+                "type":"CONTAINER",
+                "orientation":"HORIZONTAL",
+                "components": [
+                    {
+                        "type":"QUOTE",
+                        "text":"To Transform or not to Transform that is the question",
+                        "author":"Someone"
+                    },
+                    {
+                        "type":"PHOTO",
+                        "id":"1025",
+                        "credit": "Another",
+                        "crop": [
+                            {
+                                "x":1,
+                                "y":2,
+                                "w":3,
+                                "h":4
+                            }
+                        ]
+                    }                    
+                ]
+            },
+            {
+                "type":"VIDEO",
+                "caption":"Andromeda Software Development",
+                "embeddedUrl":"https://www.youtube.com/watch?v=YFR-cJ4OM6M"
+            }
+        ]
+    }
+  ]
+}

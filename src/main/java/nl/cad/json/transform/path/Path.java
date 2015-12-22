@@ -105,7 +105,7 @@ public abstract class Path implements Comparable<Path> {
 
     public abstract Object get(Object root);
 
-    public abstract void set(Object root, Object x);
+    public abstract Object set(Object root, Object x);
 
     protected abstract StringBuilder toStringBuilder();
 

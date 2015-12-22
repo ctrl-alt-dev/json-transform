@@ -34,6 +34,7 @@ import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.template.Template;
 import nl.cad.json.transform.transforms.IdentityTransform;
 import nl.cad.json.transform.transforms.JavaTransform;
+import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.TemplateAdapter;
 import nl.cad.json.transform.transforms.Transform;
 import nl.cad.json.transform.transforms.convert.IsSelectionPresentTransform;
@@ -292,6 +293,10 @@ public class MappingBuilder {
      */
     public MappingBuilder exists(Path path, Select select) {
         return this.transform(path, new IsSelectionPresentTransform(), select);
+    }
+
+    public MappingBuilder map(Path path, List<TransformSelect> transformSelects, Select select) {
+        return this.transform(path, new MappingTransform(transformSelects), select);
     }
 
     /**

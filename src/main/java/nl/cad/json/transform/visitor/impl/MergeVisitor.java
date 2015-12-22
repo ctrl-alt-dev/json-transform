@@ -21,7 +21,6 @@ import java.util.Map;
 import nl.cad.json.transform.merge.MergeStrategyException;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
-import nl.cad.json.transform.visitor.AbstractVisitor;
 import nl.cad.json.transform.visitor.AbstractVisitor.Visitor;
 
 public final class MergeVisitor implements Visitor {

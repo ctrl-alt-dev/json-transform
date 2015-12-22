@@ -15,37 +15,33 @@
  */
 package nl.cad.json.transform.transforms;
 
-import java.util.Map;
+import java.util.List;
 
+import nl.cad.json.transform.mapping.TransformSelect;
 import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.visitor.AbstractVisitor;
-import nl.cad.json.transform.visitor.impl.CopyVisitor;
-import nl.cad.json.transform.visitor.impl.IdentityVisitor;
+import nl.cad.json.transform.visitor.impl.MappingVisitor;
 
-/**
- * moves the input to the targetPath in the output.
- */
-public class MoveTransform extends AbstractVisitor implements Transform {
+public class MappingTransform extends AbstractVisitor implements Transform, ValuePathTransform {
 
-    private final Path targetPath;
+    private List<TransformSelect> transformSelects;
 
-    public MoveTransform(Path targetPath) {
-        this.targetPath = targetPath;
+    public MappingTransform(List<TransformSelect> transformSelects) {
+        this.transformSelects = transformSelects;
     }
 
     @Override
     public Object apply(Path path, Object source) {
-        if (!targetPath.isRoot()) {
-            Map<String, Object> target = NodeUtils.newObject();
-            targetPath.create(target);
-            visit(source, new CopyVisitor(targetPath, target));
-            return target;
-        } else {
-            IdentityVisitor visitor = new IdentityVisitor();
-            visit(source, visitor);
-            return visitor.getTarget();
-        }
+        MappingVisitor visitor = new MappingVisitor(transformSelects);
+        return visit(source, visitor);
+    }
+
+    @Override
+    public void apply(ValuePath source, ValuePath target) {
+        MappingVisitor visitor = new MappingVisitor(transformSelects);
+        Object result = visit(source.get(), visitor);
+        target.set(result);
     }
 
 }

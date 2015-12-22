@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping.map;
+package nl.cad.json.transform.select.selector;
 
+import nl.cad.json.transform.path.Path;
 
-public interface Mapper {
+public class PropertyValueSelector implements Selector {
 
-    Object map(Object source);
+    private final String property;
+    private Object value;
+
+    public PropertyValueSelector(String property, Object value) {
+        this.property = property;
+        this.value = value;
+    }
+
+    @Override
+    public boolean matches(Path path, Object value) {
+        if (path.isProperty()) {
+            return property.equals(path.getTop()) && (this.value.equals(value));
+        }
+        return false;
+    }
 
 }

@@ -1,0 +1,25 @@
+{
+    "list":[
+        {
+            "type":"Item",
+            "from":"pindakaas",
+            "overwrite":"some"
+        },
+        {
+            "type":"Number",
+            "number": 758,
+            "delete": "me",
+            "children": [
+                {
+                    "type":"Number",
+                    "children": [
+                        {
+                            "type":"Item",
+                            "from":"wodkasju"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

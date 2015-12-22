@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.select.selector.Selector;
 import nl.cad.json.transform.visitor.AbstractVisitor;
 
@@ -98,11 +99,16 @@ public class SelectorChain extends AbstractVisitor implements Select {
         return selectOne(source).getKey();
     }
 
-    protected boolean isMatch(Path path, List<Object> pathValues) {
+    @Override
+    public boolean isMatch(ValuePath path) {
+        return isMatch(path.path(), path.toValues());
+    }
+
+    public boolean isMatch(Path path, List<Object> pathValues) {
         Path current = path;
         int cnt = 1;
         for (int t = selectors.length - 1; t >= 0; t--) {
-            if (current == null) {
+            if ((current == null) || (pathValues.size() - cnt < 0)) {
                 return false;
             }
             if (!selectors[t].matches(current, pathValues.get(pathValues.size() - cnt))) {

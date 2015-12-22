@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
 import nl.cad.json.transform.transforms.convert.TimestampToFormattedLocalDateTimeConversion;
 import nl.cad.json.transform.transforms.convert.ToStringValueConversion;
 
@@ -41,12 +40,6 @@ public class ConversionTest {
     public void shouldToFormatTimestamp() {
         Map<String, Object> target = new TimestampToFormattedLocalDateTimeConversion("yyyy-MM-dd").apply(path, Long.valueOf(0L));
         assertNotNull(path.get(target));
-    }
-
-    @Test
-    public void shouldRenamePropertyTransform() {
-        Map<String, Object> target = new RenamePropertyConversion("name").apply(path, Long.valueOf(0L));
-        assertNotNull(path.parent().enter("name").get(target));
     }
 
 }

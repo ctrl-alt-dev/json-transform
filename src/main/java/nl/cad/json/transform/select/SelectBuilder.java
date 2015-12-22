@@ -34,6 +34,7 @@ import nl.cad.json.transform.select.selector.ObjectPropertyValueSelector;
 import nl.cad.json.transform.select.selector.OrSelector;
 import nl.cad.json.transform.select.selector.PropertyMatchSelector;
 import nl.cad.json.transform.select.selector.PropertySelector;
+import nl.cad.json.transform.select.selector.PropertyValueSelector;
 import nl.cad.json.transform.select.selector.RootSelector;
 import nl.cad.json.transform.select.selector.Selector;
 import nl.cad.json.transform.select.selector.WildcardSelector;
@@ -91,6 +92,11 @@ public class SelectBuilder {
 
     public SelectBuilder propertyMatch(String regex) {
         selectors.add(new PropertyMatchSelector(regex));
+        return this;
+    }
+
+    public SelectBuilder propertyValue(String property, Object value) {
+        selectors.add(new PropertyValueSelector(property, value));
         return this;
     }
 

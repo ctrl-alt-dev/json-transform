@@ -60,7 +60,7 @@ public class TransformTest {
 
     @Test
     public void shouldMoveTransformOnObject() {
-        Map<String, Object> dest = new MoveTransform(Path.root().enter("move")).apply(Path.root(), source);
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(Path.root(), source));
         assertEquals(source, dest.get("move"));
     }
 
@@ -68,15 +68,21 @@ public class TransformTest {
     public void shouldMoveTransformOnArray() {
         List<Object> array = NodeUtils.newArray();
         array.add("value");
-        Map<String, Object> dest = new MoveTransform(Path.root().enter("move")).apply(Path.root(), array);
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(Path.root(), array));
         assertEquals(array, dest.get("move"));
     }
 
     @Test
     public void shouldMoveTransformOnValue() {
         String value = "value";
-        Map<String, Object> dest = new MoveTransform(Path.root().enter("move")).apply(Path.root(), value);
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(Path.root(), value));
         assertEquals(value, dest.get("move"));
+    }
+
+    @Test
+    public void shouldMoveTransformToRoot() {
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root()).apply(Path.root(), source));
+        assertEquals(source, dest);
     }
 
 }

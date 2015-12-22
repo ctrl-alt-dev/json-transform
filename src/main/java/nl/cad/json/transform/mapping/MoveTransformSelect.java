@@ -57,7 +57,7 @@ public class MoveTransformSelect implements Mapper {
     }
 
     @Override
-    public Map<String, Object> map(Object source) {
+    public Object map(Object source) {
         List<Object> results = new ArrayList<Object>();
         Map<Path, Object> selection = select.select(source);
         for (Map.Entry<Path, Object> sel : selection.entrySet()) {
@@ -66,11 +66,12 @@ public class MoveTransformSelect implements Mapper {
         if (selection.isEmpty()) {
             results.add(transform.apply(Path.root(), null));
         }
-        if (isAllArray(results)) {
+        System.out.println(results);
+        if (NodeUtils.isAllArray(results)) {
             return mergeArrays(results);
-        } else if (isAllObjects(results)) {
+        } else if (NodeUtils.isAllObjects(results)) {
             return joinObjects(results);
-        } else if (isAllValues(results)) {
+        } else if (NodeUtils.isAllValues(results)) {
             return mergeValues(results);
         } else {
             throw new MixedResultSetException();
@@ -92,45 +93,17 @@ public class MoveTransformSelect implements Mapper {
         for (Object o : results) {
             merge.merge(o, tmp);
         }
-        return move.apply(Path.root(), tmp);
+        return NodeUtils.toObject(move.apply(Path.root(), tmp));
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> mergeArrays(List<Object> results) {
+    private Object mergeArrays(List<Object> results) {
         List<Object> tmp = NodeUtils.newArray();
         for (Object o : results) {
             tmp.addAll((List<Object>) o);
         }
         Map<String, Object> target = NodeUtils.newObject();
-        movePath.set(target, tmp);
-        return target;
-    }
-
-    private boolean isAllValues(List<Object> results) {
-        for (Object o : results) {
-            if (!NodeUtils.isValue(o) && !NodeUtils.isNull(o)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isAllArray(List<Object> results) {
-        for (Object o : results) {
-            if (!NodeUtils.isArray(o)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isAllObjects(List<Object> results) {
-        for (Object o : results) {
-            if (!NodeUtils.isObject(o)) {
-                return false;
-            }
-        }
-        return true;
+        return movePath.set(target, tmp);
     }
 
 }

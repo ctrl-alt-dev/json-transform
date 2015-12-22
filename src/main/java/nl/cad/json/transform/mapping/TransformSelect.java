@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.mapping;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.transforms.ValuePathTransform;
 
-public class RenamePropertyConversion implements ValuePathTransform {
+public class TransformSelect {
 
-    private String name;
+    private ValuePathTransform transform;
+    private Select select;
 
-    public RenamePropertyConversion(String name) {
-        this.name = name;
+    public TransformSelect(ValuePathTransform transform, Select select) {
+        this.transform = transform;
+        this.select = select;
     }
 
-    @Override
+    public boolean isMatch(ValuePath path) {
+        return select.isMatch(path);
+    }
+
     public void apply(ValuePath source, ValuePath target) {
-        Path rename = source.path().parent().enter(name);
-        ValuePath renameValue = target.parent().enter(rename, null);
-        renameValue.set(source.get());
+        transform.apply(source, target);
     }
+
 }

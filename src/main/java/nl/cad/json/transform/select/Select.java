@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 
 /**
  * allows the matching of a selection against a source.
@@ -52,5 +53,12 @@ public interface Select {
      * @return the matching path.
      */
     Path selectOnePath(Map<String, Object> source);
+
+    /**
+     * returns true if the given path matches the select.
+     * @param path the path.
+     * @return true if this path matches the select.
+     */
+    boolean isMatch(ValuePath path);
 
 }
