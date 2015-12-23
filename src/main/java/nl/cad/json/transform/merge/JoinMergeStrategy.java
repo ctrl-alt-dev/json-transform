@@ -15,8 +15,6 @@
  */
 package nl.cad.json.transform.merge;
 
-import java.util.Map;
-
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
 import nl.cad.json.transform.visitor.AbstractVisitor;
@@ -34,17 +32,15 @@ public class JoinMergeStrategy extends AbstractVisitor implements MergeStrategy 
     }
 
     @Override
-    public Object merge(Object source, Map<String, Object> target) {
+    public Object merge(Object source, Object target) {
         if (NodeUtils.isNull(targetPath.get(target))) {
             targetPath.create(target);
             Object result = visit(source, new MergeVisitor());
-            targetPath.set(target, result);
-            return target;
+            return targetPath.set(target, result);
         } else {
             Object root = targetPath.get(target);
             Object result = visit(source, new MergeVisitor(), root);
-            targetPath.set(target, result);
-            return target;
+            return targetPath.set(target, result);
         }
     }
 

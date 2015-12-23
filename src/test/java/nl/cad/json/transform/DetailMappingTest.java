@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.mapping.DetailMappingBuilder;
-import nl.cad.json.transform.mapping.MappingBuilder;
 import nl.cad.json.transform.mapping.TransformSelect;
+import nl.cad.json.transform.mapping.builder.DetailMappingBuilder;
+import nl.cad.json.transform.mapping.builder.MappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.path.Path;

@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping;
+package nl.cad.json.transform.mapping.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.cad.json.transform.mapping.TransformSelect;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.transforms.MappingTransform;

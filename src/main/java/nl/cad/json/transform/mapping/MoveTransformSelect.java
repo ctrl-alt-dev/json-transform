@@ -18,6 +18,7 @@ package nl.cad.json.transform.mapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import nl.cad.json.transform.merge.MergeFactory;
 import nl.cad.json.transform.merge.MergeStrategy;
@@ -42,57 +43,72 @@ public class MoveTransformSelect implements Transform {
 
     }
 
-    private MoveTransform move;
+    private Map<Path, MoveTransform> moves = new TreeMap<Path, MoveTransform>();
     private Transform transform;
-    private Select select;
+    private List<Select> selects = new ArrayList<Select>();
     private MergeStrategy merge;
-    private Path movePath;
 
     public MoveTransformSelect(Path path, Transform transform, Select select) {
-        this.movePath = path;
-        this.move = new MoveTransform(path);
+        moves.put(path, new MoveTransform(path));
         this.transform = transform;
-        this.select = select;
+        this.selects.add(select);
         this.merge = MergeFactory.join();
+    }
+
+    public MoveTransformSelect(List<Path> moves, Transform transform, List<Select> selects) {
+        this.merge = MergeFactory.join();
+        this.transform = transform;
+        for (Path move : moves) {
+            this.moves.put(move, new MoveTransform(move));
+        }
+        this.selects.addAll(selects);
     }
 
     @Override
     public Object apply(Object source) {
         List<Object> results = new ArrayList<Object>();
-        List<ValuePath> selection = select.select(source);
-        for (ValuePath sel : selection) {
-            results.add(transform.apply(sel.value()));
+        for (Select select : selects) {
+            List<ValuePath> selection = select.select(source);
+            for (ValuePath sel : selection) {
+                results.add(transform.apply(sel.value()));
+            }
         }
-        if (selection.isEmpty()) {
+        if (results.isEmpty()) {
             results.add(transform.apply(null));
         }
         if (NodeUtils.isAllArray(results)) {
-            return mergeArrays(results);
+            return move(mergeArrays(results));
         } else if (NodeUtils.isAllObjects(results)) {
-            return joinObjects(results);
+            return move(joinObjects(results));
         } else if (NodeUtils.isAllValues(results)) {
-            return mergeValues(results);
+            return move(mergeValues(results));
         } else {
             throw new MixedResultSetException();
         }
     }
 
-    private Map<String, Object> mergeValues(List<Object> results) {
+    private Object move(Object object) {
+        Object result = null;
+        for (Map.Entry<Path, MoveTransform> entry : moves.entrySet()) {
+            result = merge.merge(entry.getValue().apply(object), result);
+        }
+        return result;
+    }
+
+    private Object mergeValues(List<Object> results) {
         if (results.size() == 1) {
-            Map<String, Object> tmp = NodeUtils.newObject();
-            movePath.set(tmp, results.get(0));
-            return tmp;
+            return results.get(0);
         } else {
             throw new CantMergeMultipleValuesException();
         }
     }
 
-    private Map<String, Object> joinObjects(List<Object> results) {
+    private Object joinObjects(List<Object> results) {
         Map<String, Object> tmp = NodeUtils.newObject();
         for (Object o : results) {
             merge.merge(o, tmp);
         }
-        return NodeUtils.toObject(move.apply(tmp));
+        return tmp;
     }
 
     @SuppressWarnings("unchecked")
@@ -101,8 +117,7 @@ public class MoveTransformSelect implements Transform {
         for (Object o : results) {
             tmp.addAll((List<Object>) o);
         }
-        Map<String, Object> target = NodeUtils.newObject();
-        return movePath.set(target, tmp);
+        return tmp;
     }
 
 }

@@ -17,7 +17,6 @@ package nl.cad.json.transform.path;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import nl.cad.json.transform.util.NodeUtils;
 
@@ -126,12 +125,12 @@ public abstract class Path implements Comparable<Path> {
      * @param root the root.
      * @return this path.
      */
-    public final Path create(Map<String, Object> root) {
+    public final Path create(Object root) {
         createPath(root, null);
         return this;
     }
 
-    private void createPath(Map<String, Object> root, Path child) {
+    private void createPath(Object root, Path child) {
         if (parent() != null) {
             parent().createPath(root, this);
             Object currentValue = get(root);

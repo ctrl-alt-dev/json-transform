@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping;
+package nl.cad.json.transform.mapping.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.cad.json.transform.mapping.MoveTransformSelect;
+import nl.cad.json.transform.mapping.TransformSelect;
 import nl.cad.json.transform.mapping.map.JoinMapper;
 import nl.cad.json.transform.mapping.map.ParallelMapper;
 import nl.cad.json.transform.mapping.map.SequenceMapper;
@@ -131,6 +133,15 @@ public class MappingBuilder {
     protected MappingBuilder(MergeStrategy merge) {
         this.merge = merge;
         this.ops = new ArrayList<Transform>();
+    }
+
+    public MultiMoveBuilder manyToMany() {
+        return new MultiBuilder(this);
+    }
+
+    public MappingBuilder transform(List<Path> moves, Transform transform, List<Select> selects) {
+        ops.add(new MoveTransformSelect(moves, transform, selects));
+        return this;
     }
 
     /**

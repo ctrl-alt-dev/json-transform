@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import nl.cad.json.transform.java.PojoToDocumentMapperTest;
-import nl.cad.json.transform.mapping.MappingBuilder;
+import nl.cad.json.transform.mapping.builder.MappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.JavaSource;
 import nl.cad.json.transform.mapping.source.MultiSource;
@@ -32,6 +32,7 @@ import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.template.CallbackTemplate;
 import nl.cad.json.transform.template.handler.SelectHandler;
 import nl.cad.json.transform.transforms.FlattenCompositeTransform;
+import nl.cad.json.transform.transforms.IdentityTransform;
 import nl.cad.json.transform.transforms.convert.ToStringValueConversion;
 import nl.cad.json.transform.util.NodeUtils;
 import nl.cad.json.transform.utils.TestUtils;
@@ -183,5 +184,18 @@ public class MapperTest {
         assertEquals("{b=pindakaas}", String.valueOf(document));
     }
 
+    @Test
+    public void shouldManyToManyMap() {
+        DocumentSource mapping = MappingBuilder.seq().manyToMany()
+                .move(Path.fromString("left"), Path.fromString("right"))
+                .transform(new IdentityTransform()).select(
+                        SelectBuilder.select().property("list").build(),
+                        SelectBuilder.select().property("listOfObjects").build()).done().build();
+        //
+        Map<String, Object> src = TestUtils.parseJson("/json/identity.json");
+        //
+        assertEquals("{left=[1, 2, 3, 4, {name=erik}, {name=fluffy}], right=[1, 2, 3, 4, {name=erik}, {name=fluffy}]}",
+                String.valueOf(mapping.getDocument(new ValueSource(src))));
+    }
 
 }

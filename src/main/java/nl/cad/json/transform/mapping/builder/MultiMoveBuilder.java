@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.merge;
+package nl.cad.json.transform.mapping.builder;
 
+import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.transforms.Transform;
 
-public interface MergeStrategy {
+public interface MultiMoveBuilder {
 
-    /**
-     * merges the source object into the targetRoot.
-     * @param source the source object.
-     * @param targetRoot the targetRoot.
-     * @return the (new) root.
-     */
-    Object merge(Object source, Object targetRoot);
-
+    MultiMoveBuilder move(Path... path);
+    
+    MultiSelectBuilder transform(Transform transform);
 }

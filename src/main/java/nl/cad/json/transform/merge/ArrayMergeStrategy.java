@@ -16,7 +16,6 @@
 package nl.cad.json.transform.merge;
 
 import java.util.List;
-import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.util.NodeUtils;
@@ -36,7 +35,7 @@ public class ArrayMergeStrategy extends AbstractVisitor implements MergeStrategy
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object merge(Object source, Map<String, Object> target) {
+    public Object merge(Object source, Object target) {
         Object value = targetPath.get(target);
         if (NodeUtils.isNull(value)) {
             targetPath.create(target);

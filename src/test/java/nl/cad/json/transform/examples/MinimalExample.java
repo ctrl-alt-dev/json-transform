@@ -18,7 +18,7 @@ package nl.cad.json.transform.examples;
 import java.io.IOException;
 import java.util.Map;
 
-import nl.cad.json.transform.mapping.MappingBuilder;
+import nl.cad.json.transform.mapping.builder.MappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.path.Path;
