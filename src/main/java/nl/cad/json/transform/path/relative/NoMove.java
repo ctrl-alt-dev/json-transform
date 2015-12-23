@@ -13,17 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms;
+package nl.cad.json.transform.path.relative;
 
-import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.path.Path;
 
-public interface ValuePathTransform {
+public class NoMove implements RelativePath {
 
-    /**
-     * transforms the source into target.
-     * @param source the source.
-     * @param target the target.
-     */
-    void apply(ValuePath source, ValuePath target);
+    private final RelativePath parent;
+
+    public NoMove() {
+        this(null);
+    }
+
+    public NoMove(RelativePath parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public Path apply(Path path) {
+        if (parent != null) {
+            path = parent.apply(path);
+        }
+        return path;
+    }
 
 }

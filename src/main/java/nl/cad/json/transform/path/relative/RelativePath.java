@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms;
+package nl.cad.json.transform.path.relative;
 
-import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.path.Path;
 
-public interface ValuePathTransform {
+public interface RelativePath {
 
-    /**
-     * transforms the source into target.
-     * @param source the source.
-     * @param target the target.
-     */
-    void apply(ValuePath source, ValuePath target);
-
+    Path apply(Path path);
+    
 }

@@ -13,25 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms;
+package nl.cad.json.transform.path.relative;
 
 import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.path.ValuePath;
 
-public class ValuePathTransformAdapter implements Transform {
+public class ParentMove implements RelativePath {
 
-    private final ValuePathTransform vpt;
+    public static final class MoveBeyondRootException extends RuntimeException {
 
-    public ValuePathTransformAdapter(ValuePathTransform vpt) {
-        this.vpt = vpt;
+    }
+
+    private final RelativePath parent;
+
+    public ParentMove() {
+        this(null);
+    }
+
+    public ParentMove(RelativePath parent) {
+        this.parent = parent;
     }
 
     @Override
-    public Object apply(Path path, Object value) {
-        ValuePath source = new ValuePath(value);
-        ValuePath target = new ValuePath(null);
-        vpt.apply(source, target);
-        return target.get();
+    public Path apply(Path path) {
+        if (parent != null) {
+            path = parent.apply(path);
+        }
+        if (path.isRoot()) {
+            throw new MoveBeyondRootException();
+        }
+        return path.parent();
     }
 
 }
