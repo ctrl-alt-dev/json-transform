@@ -59,8 +59,8 @@ public class UseCaseTest {
                 MappingBuilder.seq().copy().namedSource("authors"),
                 MappingBuilder.seq().copy().namedSource("related"),
                 MappingBuilder.par(MergeFactory.join())
-                        .transform(Path.fromString("publication"), timestamp, select().property("publicationDate").build())
-                        .transform(Path.fromString("update"), timestamp, select().property("lastUpdateDate").build())
+                        .map(Path.fromString("publication"), timestamp, select().property("publicationDate").build())
+                        .map(Path.fromString("update"), timestamp, select().property("lastUpdateDate").build())
                         .transform(Path.fromString("title"), plainTextTransform, select().objectPropertyValue("type", "TITLE").build())
                         .transform(Path.fromString("intro"), plainTextTransform, select().objectPropertyValue("type", "INTRO").build())
                         .exists(Path.fromString("twitter"), select().or(select()

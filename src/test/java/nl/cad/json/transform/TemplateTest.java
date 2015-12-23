@@ -64,7 +64,7 @@ public class TemplateTest {
         Map<String, Object> results = template.fill(source);
 
         assertEquals(
-                "{results={a=[a, b, value]}, value=nasigoreng}",
+                "{results={a=[value, a, b]}, value=nasigoreng}",
                 results.toString());
     }
 
@@ -77,7 +77,7 @@ public class TemplateTest {
         Map<String, Object> results = template.fill(source);
 
         assertEquals(
-                "{results={a=[a, b, value], b={name=value, number=42}}, value=nasigoreng}",
+                "{results={a=[value, a, b], b={name=value, number=42}}, value=nasigoreng}",
                 results.toString());
     }
 

@@ -31,14 +31,14 @@ public interface Select {
      * @param source the source.
      * @return all matching paths and their values.
      */
-    Map<Path, Object> select(Object source);
+    List<ValuePath> select(Object source);
 
     /**
      * matches the given source against this selection, expecting only one match.
      * @param source the source.
      * @return the matching path and value.
      */
-    Map.Entry<Path, Object> selectOne(Map<String, Object> source);
+    ValuePath selectOne(Map<String, Object> source);
 
     /**
      * matches the given source against this selection.

@@ -18,8 +18,6 @@ package nl.cad.json.transform.select;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
@@ -34,33 +32,21 @@ public class SelectorChain extends AbstractVisitor implements Select {
         this.selectors = selectors;
     }
 
-    public Map<Path, Object> select(Object source) {
-        final Map<Path, Object> matches = new TreeMap<Path, Object>();
-        visit(source, new ValuePathVisitor() {
+    public List<ValuePath> select(Object source) {
+        final List<ValuePath> matches = new ArrayList<ValuePath>();
+        visit(source, new ValuePathVisitorImpl() {
             
             @Override
             public void onValue(ValuePath source, ValuePath target) {
                 if (isMatch(source)) {
-                    matches.put(source.path(), source.value());
+                    matches.add(source);
                 }
-            }
-            
-            @Override
-            public void onEndObject(ValuePath source, ValuePath target) {
-                // TODO Auto-generated method stub
-                
-            }
-            
-            @Override
-            public void onEndArray(ValuePath source, ValuePath target) {
-                // TODO Auto-generated method stub
-                
             }
             
             @Override
             public boolean onBeginObject(ValuePath source, ValuePath target) {
                 if (isMatch(source)) {
-                    matches.put(source.path(), source.value());
+                    matches.add(source);
                 }
                 return true;
             }
@@ -68,7 +54,7 @@ public class SelectorChain extends AbstractVisitor implements Select {
             @Override
             public boolean onBeginArray(ValuePath source, ValuePath target) {
                 if (isMatch(source)) {
-                    matches.put(source.path(), source.value());
+                    matches.add(source);
                 }
                 return true;
             }
@@ -78,43 +64,42 @@ public class SelectorChain extends AbstractVisitor implements Select {
 
     @Override
     public List<Path> selectPaths(Map<String, Object> source) {
-        Map<Path, Object> results = select(source);
-        return new ArrayList<Path>(results.keySet());
+        List<ValuePath> results = select(source);
+        ArrayList<Path> tmp = new ArrayList<>();
+        for (ValuePath vp:results) {
+            tmp.add(vp.path());
+        }
+        return tmp;
     }
 
     @Override
-    public Entry<Path, Object> selectOne(Map<String, Object> source) {
-        Map<Path, Object> results = select(source);
+    public ValuePath selectOne(Map<String, Object> source) {
+        List<ValuePath> results = select(source);
         if (results.size() != 1) {
             throw new SelectionException();
         }
-        return results.entrySet().iterator().next();
+        return results.get(0);
     }
 
     @Override
     public Path selectOnePath(Map<String, Object> source) {
-        return selectOne(source).getKey();
+        return selectOne(source).path();
     }
 
     @Override
     public boolean isMatch(ValuePath path) {
-        return isMatch(path.path(), path.toValues());
-    }
-
-    public boolean isMatch(Path path, List<Object> pathValues) {
-        Path current = path;
-        int cnt = 1;
-        for (int t = selectors.length - 1; t >= 0; t--) {
-            if ((current == null) || (pathValues.size() - cnt < 0)) {
+        ValuePath current = path;
+        int cnt = selectors.length;
+        do {
+            if (current == null) {
                 return false;
             }
-            if (!selectors[t].matches(current, pathValues.get(pathValues.size() - cnt))) {
+            cnt--;
+            if (!selectors[cnt].matches(current.path(), current.value())) {
                 return false;
             }
             current = current.parent();
-            cnt++;
-        }
+        } while (cnt > 0);
         return true;
     }
-
 }

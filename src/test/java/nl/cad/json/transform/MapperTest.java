@@ -77,7 +77,7 @@ public class MapperTest {
     @Test
     public void shouldConvertViaSelect() {
         DocumentSource mb = MappingBuilder.seq()
-                .transform(new ToStringValueConversion(), SelectBuilder.fromString("property(\"one\")")).build();
+                .map(new ToStringValueConversion(), SelectBuilder.fromString("property(\"one\")")).build();
         //
         Map<String, Object> src = TestUtils.parseJson("/json/one.json");
         Map<String, Object> out = NodeUtils.toObject(mb.getDocument(new ValueSource(src)));

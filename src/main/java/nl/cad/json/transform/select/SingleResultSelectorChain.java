@@ -15,11 +15,10 @@
  */
 package nl.cad.json.transform.select;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.select.selector.Selector;
 
 public class SingleResultSelectorChain extends SelectorChain {
@@ -28,12 +27,11 @@ public class SingleResultSelectorChain extends SelectorChain {
         super(selectors);
     }
 
-    public Map<Path, Object> select(Object source) {
-        Map<Path, Object> result = new TreeMap<Path, Object>();
-        Map<Path, Object> tmp = super.select(source);
+    public List<ValuePath> select(Object source) {
+        List<ValuePath> result = new ArrayList<>();
+        List<ValuePath> tmp = super.select(source);
         if (tmp.size() > 0) {
-            Entry<Path, Object> next = tmp.entrySet().iterator().next();
-            result.put(next.getKey(), next.getValue());
+            result.add(tmp.get(0));
         }
         return result;
     }

@@ -13,16 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms;
 
+import java.util.Map;
+
+import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
-import nl.cad.json.transform.transforms.ValuePathTransform;
+import nl.cad.json.transform.util.NodeUtils;
 
-public class ToStringValueConversion implements ValuePathTransform {
+public class ValuePathTransformAdapter implements Transform {
+
+    private final ValuePathTransform vpt;
+
+    public ValuePathTransformAdapter(ValuePathTransform vpt) {
+        this.vpt = vpt;
+    }
 
     @Override
-    public void apply(ValuePath source, ValuePath target) {
-        target.set(String.valueOf(source.get()));
+    public Object apply(Path path, Object value) {
+        Map<String, Object> result = NodeUtils.newObject();
+        ValuePath source = new ValuePath(value);
+        ValuePath target = new ValuePath(null);
+        vpt.apply(source, target);
+        result.put(String.valueOf(path.getTop()), target.get());
+        return result;
     }
 
 }

@@ -17,10 +17,8 @@ package nl.cad.json.transform;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.util.Map;
-
-import nl.cad.json.transform.path.Path;
+import static org.junit.Assert.assertTrue;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.convert.TimestampToFormattedLocalDateTimeConversion;
 import nl.cad.json.transform.transforms.convert.ToStringValueConversion;
 
@@ -28,18 +26,21 @@ import org.junit.Test;
 
 public class ConversionTest {
 
-    private Path path = Path.root().enter("path");
-
     @Test
     public void shouldToString() {
-        Map<String, Object> target = new ToStringValueConversion().apply(path, Long.valueOf(42));
-        assertEquals("42", path.get(target));
+        ValuePath source = new ValuePath(Long.valueOf(42));
+        ValuePath target = new ValuePath(null);
+        new ToStringValueConversion().apply(source, target);
+        assertEquals("42", target.get());
     }
 
     @Test
     public void shouldToFormatTimestamp() {
-        Map<String, Object> target = new TimestampToFormattedLocalDateTimeConversion("yyyy-MM-dd").apply(path, Long.valueOf(0L));
-        assertNotNull(path.get(target));
+        ValuePath source = new ValuePath(Long.valueOf(0));
+        ValuePath target = new ValuePath(null);
+        new TimestampToFormattedLocalDateTimeConversion("yyyy-MM-dd").apply(source, target);
+        assertNotNull(target.get());
+        assertTrue(String.valueOf(target.get()).startsWith("19"));
     }
 
 }

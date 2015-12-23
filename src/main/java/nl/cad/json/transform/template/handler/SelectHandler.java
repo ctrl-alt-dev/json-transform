@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.template.CallbackHandler;
@@ -47,11 +48,11 @@ public class SelectHandler implements CallbackHandler {
         boolean singleSelect = isSingleSelect(value);
         Select read = SelectBuilder.fromString(String.valueOf(value).substring(singleSelect ? SINGLE_SELECT.length() : SELECT.length()));
         if (singleSelect) {
-            return read.selectOne(source).getValue();
+            return read.selectOne(source).value();
         } else {
             List<Object> results = NodeUtils.newArray();
-            for (Map.Entry<Path, Object> found : read.select(source).entrySet()) {
-                results.add(found.getValue());
+            for (ValuePath found : read.select(source)) {
+                results.add(found.value());
             }
             return results;
         }

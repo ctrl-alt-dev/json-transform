@@ -113,7 +113,7 @@ public class SelectTest {
 
     @Test
     public void shouldSelectRoot() {
-        assertEquals(source, select().root().build().selectOne(source).getValue());
+        assertEquals(source, select().root().build().selectOne(source).value());
     }
 
     @Test
@@ -149,6 +149,11 @@ public class SelectTest {
     @Test
     public void shouldSelectObjectPropertyMatch() {
         assertEquals(3, select().objectPropertyMatch("(name|some)").build().select(source).size());
+    }
+
+    @Test
+    public void shouldNotEvaluateSelectTooDeep() {
+        assertEquals(0, select().property("a").any().any().any().property("object").property("some").build().select(source).size());
     }
 
     @Test

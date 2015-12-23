@@ -23,6 +23,7 @@ import nl.cad.json.transform.mapping.map.Mapper;
 import nl.cad.json.transform.merge.MergeFactory;
 import nl.cad.json.transform.merge.MergeStrategy;
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.transforms.MoveTransform;
 import nl.cad.json.transform.transforms.Transform;
@@ -59,9 +60,9 @@ public class MoveTransformSelect implements Mapper {
     @Override
     public Object map(Object source) {
         List<Object> results = new ArrayList<Object>();
-        Map<Path, Object> selection = select.select(source);
-        for (Map.Entry<Path, Object> sel : selection.entrySet()) {
-            results.add(transform.apply(sel.getKey(), sel.getValue()));
+        List<ValuePath> selection = select.select(source);
+        for (ValuePath sel : selection) {
+            results.add(transform.apply(sel.path(), sel.value()));
         }
         if (selection.isEmpty()) {
             results.add(transform.apply(Path.root(), null));

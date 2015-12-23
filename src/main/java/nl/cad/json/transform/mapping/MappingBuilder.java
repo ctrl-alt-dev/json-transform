@@ -37,6 +37,8 @@ import nl.cad.json.transform.transforms.JavaTransform;
 import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.TemplateAdapter;
 import nl.cad.json.transform.transforms.Transform;
+import nl.cad.json.transform.transforms.ValuePathTransform;
+import nl.cad.json.transform.transforms.ValuePathTransformAdapter;
 import nl.cad.json.transform.transforms.convert.IsSelectionPresentTransform;
 
 /**
@@ -198,6 +200,14 @@ public class MappingBuilder {
      */
     public MappingBuilder transform(Path path, Transform transform) {
         return this.transform(path, transform, SelectBuilder.selectRoot());
+    }
+
+    public MappingBuilder map(Path move, ValuePathTransform transform, Select select) {
+        return this.transform(move, new ValuePathTransformAdapter(transform), select);
+    }
+
+    public MappingBuilder map(ValuePathTransform transform, Select select) {
+        return this.transform(Path.root(), new ValuePathTransformAdapter(transform), select);
     }
     
     /**

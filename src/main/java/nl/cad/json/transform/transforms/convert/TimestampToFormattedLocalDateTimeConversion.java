@@ -19,13 +19,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
-import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.transforms.Transform;
-import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.transforms.ValuePathTransform;
 
-public class TimestampToFormattedLocalDateTimeConversion implements Transform {
+public class TimestampToFormattedLocalDateTimeConversion implements ValuePathTransform {
 
     private DateTimeFormatter formatter;
 
@@ -42,12 +40,10 @@ public class TimestampToFormattedLocalDateTimeConversion implements Transform {
     }
 
     @Override
-    public Map<String, Object> apply(Path path, Object source) {
-        Map<String, Object> target = NodeUtils.newObject();
-        long timestamp = Long.valueOf(String.valueOf(source));
+    public void apply(ValuePath source, ValuePath target) {
+        long timestamp = Long.valueOf(String.valueOf(source.get()));
         LocalDateTime localDateTime = Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        path.set(target, formatter.format(localDateTime));
-        return target;
+        target.set(formatter.format(localDateTime));
     }
 
 }
