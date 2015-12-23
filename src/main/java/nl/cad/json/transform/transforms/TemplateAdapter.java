@@ -17,7 +17,6 @@ package nl.cad.json.transform.transforms;
 
 import java.util.Map;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.template.Template;
 import nl.cad.json.transform.util.NodeUtils;
 
@@ -33,7 +32,7 @@ public class TemplateAdapter implements Transform {
     }
 
     @Override
-    public Map<String, Object> apply(Path path, Object source) {
+    public Map<String, Object> apply(Object source) {
         return template.fill(NodeUtils.toObject(source));
     }
 

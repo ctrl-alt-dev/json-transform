@@ -15,16 +15,14 @@
  */
 package nl.cad.json.transform.transforms;
 
-import nl.cad.json.transform.path.Path;
 
 public interface Transform {
 
     /**
      * transforms the source object located at path.
-     * @param path the path the object is at.
      * @param source the source object.
      * @return the transformed source object.
      */
-    Object apply(Path path, Object source);
+    Object apply(Object source);
 
 }

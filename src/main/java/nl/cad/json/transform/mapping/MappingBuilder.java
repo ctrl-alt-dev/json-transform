@@ -126,11 +126,11 @@ public class MappingBuilder {
     }
     
     private MergeStrategy merge;
-    private List<MoveTransformSelect> ops;
+    private List<Transform> ops;
 
     protected MappingBuilder(MergeStrategy merge) {
         this.merge = merge;
-        this.ops = new ArrayList<MoveTransformSelect>();
+        this.ops = new ArrayList<Transform>();
     }
 
     /**

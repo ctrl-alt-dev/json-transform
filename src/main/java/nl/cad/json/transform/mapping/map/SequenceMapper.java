@@ -17,8 +17,8 @@ package nl.cad.json.transform.mapping.map;
 
 import java.util.List;
 
-import nl.cad.json.transform.mapping.MoveTransformSelect;
 import nl.cad.json.transform.mapping.source.DocumentSource;
+import nl.cad.json.transform.transforms.Transform;
 
 /**
  * takes the input document and applies the Move Transform Selects in reverse order
@@ -26,10 +26,10 @@ import nl.cad.json.transform.mapping.source.DocumentSource;
  */
 public class SequenceMapper implements DocumentSource {
 
-    private List<MoveTransformSelect> ops;
+    private List<Transform> ops;
     private DocumentSource src;
 
-    public SequenceMapper(List<MoveTransformSelect> ops, DocumentSource src) {
+    public SequenceMapper(List<Transform> ops, DocumentSource src) {
         this.ops = ops;
         this.src = src;
     }
@@ -38,7 +38,7 @@ public class SequenceMapper implements DocumentSource {
     public Object getDocument(DocumentSource input) {
         Object source = src.getDocument(input);
         for (int t = ops.size() - 1; t >= 0; t--) {
-            source = ops.get(t).map(source);
+            source = ops.get(t).apply(source);
         }
         return source;
     }

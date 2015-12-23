@@ -50,7 +50,7 @@ public class UseCaseTest {
         Transform plainTextTransform = new Transform() {
 
             @Override
-            public Object apply(Path path, Object source) {
+            public Object apply(Object source) {
                 return NodeUtils.toObject(source).get("text");
             }
         };

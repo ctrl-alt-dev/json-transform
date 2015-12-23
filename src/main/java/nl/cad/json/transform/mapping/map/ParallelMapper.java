@@ -18,9 +18,9 @@ package nl.cad.json.transform.mapping.map;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.mapping.MoveTransformSelect;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.merge.MergeStrategy;
+import nl.cad.json.transform.transforms.Transform;
 import nl.cad.json.transform.util.NodeUtils;
 
 /**
@@ -30,10 +30,10 @@ import nl.cad.json.transform.util.NodeUtils;
 public class ParallelMapper implements DocumentSource {
 
     private MergeStrategy merge;
-    private List<MoveTransformSelect> ops;
+    private List<Transform> ops;
     private DocumentSource src;
 
-    public ParallelMapper(MergeStrategy merge, List<MoveTransformSelect> ops, DocumentSource src) {
+    public ParallelMapper(MergeStrategy merge, List<Transform> ops, DocumentSource src) {
         this.merge = merge;
         this.ops = ops;
         this.src = src;
@@ -43,8 +43,8 @@ public class ParallelMapper implements DocumentSource {
     public Object getDocument(DocumentSource input) {
         Map<String, Object> result = NodeUtils.newObject();
         Object source = src.getDocument(input);
-        for (MoveTransformSelect op : ops) {
-            merge.merge(op.map(source), result);
+        for (Transform op : ops) {
+            merge.merge(op.apply(source), result);
         }
         return result;
     }

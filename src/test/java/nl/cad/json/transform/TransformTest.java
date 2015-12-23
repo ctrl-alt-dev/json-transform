@@ -39,7 +39,7 @@ public class TransformTest {
     }
     @Test
     public void shouldDoIdentityTransformOnObject() {
-        Object dest = new IdentityTransform().apply(Path.root(), source);
+        Object dest = new IdentityTransform().apply(source);
         assertEquals(source, dest);
     }
 
@@ -47,20 +47,20 @@ public class TransformTest {
     public void shouldDoIdentityTransformOnArray() {
         List<Object> array = NodeUtils.newArray();
         array.add("value");
-        Object dest = new IdentityTransform().apply(Path.root(), array);
+        Object dest = new IdentityTransform().apply(array);
         assertEquals(array, dest);
     }
 
     @Test
     public void shouldDoIdentityTransformOnValue() {
         String value = "value";
-        Object dest = new IdentityTransform().apply(Path.root(), value);
+        Object dest = new IdentityTransform().apply(value);
         assertEquals(value, dest);
     }
 
     @Test
     public void shouldMoveTransformOnObject() {
-        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(Path.root(), source));
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(source));
         assertEquals(source, dest.get("move"));
     }
 
@@ -68,20 +68,20 @@ public class TransformTest {
     public void shouldMoveTransformOnArray() {
         List<Object> array = NodeUtils.newArray();
         array.add("value");
-        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(Path.root(), array));
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(array));
         assertEquals(array, dest.get("move"));
     }
 
     @Test
     public void shouldMoveTransformOnValue() {
         String value = "value";
-        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(Path.root(), value));
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root().enter("move")).apply(value));
         assertEquals(value, dest.get("move"));
     }
 
     @Test
     public void shouldMoveTransformToRoot() {
-        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root()).apply(Path.root(), source));
+        Map<String, Object> dest = NodeUtils.toObject(new MoveTransform(Path.root()).apply(source));
         assertEquals(source, dest);
     }
 

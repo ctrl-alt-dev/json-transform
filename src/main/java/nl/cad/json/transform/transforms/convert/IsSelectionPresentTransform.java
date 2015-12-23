@@ -15,7 +15,6 @@
  */
 package nl.cad.json.transform.transforms.convert;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.Transform;
 
 /**
@@ -24,7 +23,7 @@ import nl.cad.json.transform.transforms.Transform;
 public class IsSelectionPresentTransform implements Transform {
 
     @Override
-    public Object apply(Path path, Object source) {
+    public Object apply(Object source) {
         return Boolean.valueOf(source != null);
     }
 }

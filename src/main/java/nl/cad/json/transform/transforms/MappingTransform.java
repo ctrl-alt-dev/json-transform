@@ -18,11 +18,13 @@ package nl.cad.json.transform.transforms;
 import java.util.List;
 
 import nl.cad.json.transform.mapping.TransformSelect;
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.visitor.AbstractVisitor;
 import nl.cad.json.transform.visitor.impl.MappingVisitor;
 
+/**
+ * Allows easy mapping of properties.
+ */
 public class MappingTransform extends AbstractVisitor implements Transform, ValuePathTransform {
 
     private List<TransformSelect> transformSelects;
@@ -32,7 +34,7 @@ public class MappingTransform extends AbstractVisitor implements Transform, Valu
     }
 
     @Override
-    public Object apply(Path path, Object source) {
+    public Object apply(Object source) {
         MappingVisitor visitor = new MappingVisitor(transformSelects);
         return visit(source, visitor);
     }

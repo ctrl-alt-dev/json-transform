@@ -60,7 +60,7 @@ public class JavaTransform<A> implements Transform {
     }
 
     @Override
-    public Map<String, Object> apply(Path path, Object source) {
+    public Map<String, Object> apply(Object source) {
         Map<String, Object> target = NodeUtils.newObject();
         A javaSource = deserializer.toJava(argType, source);
         Object javaResult = function.transform(javaSource);

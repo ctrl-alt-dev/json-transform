@@ -46,7 +46,7 @@ public class CallbackTemplate extends AbstractVisitor implements Template {
     @Override
     public Map<String, Object> fill(Map<String, Object> src) {
 
-        final Map<String, Object> dst = (Map<String, Object>) idTransform.apply(Path.root(), template);
+        final Map<String, Object> dst = (Map<String, Object>) idTransform.apply(template);
 
         visit(dst, new ValuePathVisitorImpl() {
 

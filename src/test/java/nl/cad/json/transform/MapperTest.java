@@ -91,7 +91,7 @@ public class MapperTest {
     @Test
     public void shouldFlattenComposite() {
         DocumentSource mb = MappingBuilder.seq()
-                .transform(
+                .transform(Path.fromString("components"),
                         new FlattenCompositeTransform("components"),
                         SelectBuilder.select().root().property("components").build()
                 ).build();

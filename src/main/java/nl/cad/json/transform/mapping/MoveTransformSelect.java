@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import nl.cad.json.transform.mapping.map.Mapper;
 import nl.cad.json.transform.merge.MergeFactory;
 import nl.cad.json.transform.merge.MergeStrategy;
 import nl.cad.json.transform.path.Path;
@@ -33,7 +32,7 @@ import nl.cad.json.transform.util.NodeUtils;
  * Move Transform Select, selects nodes from the source,
  * applies the transform and moves the result to the given path.
  */
-public class MoveTransformSelect implements Mapper {
+public class MoveTransformSelect implements Transform {
 
     public static class MixedResultSetException extends RuntimeException {
 
@@ -58,16 +57,15 @@ public class MoveTransformSelect implements Mapper {
     }
 
     @Override
-    public Object map(Object source) {
+    public Object apply(Object source) {
         List<Object> results = new ArrayList<Object>();
         List<ValuePath> selection = select.select(source);
         for (ValuePath sel : selection) {
-            results.add(transform.apply(sel.path(), sel.value()));
+            results.add(transform.apply(sel.value()));
         }
         if (selection.isEmpty()) {
-            results.add(transform.apply(Path.root(), null));
+            results.add(transform.apply(null));
         }
-        System.out.println(results);
         if (NodeUtils.isAllArray(results)) {
             return mergeArrays(results);
         } else if (NodeUtils.isAllObjects(results)) {
@@ -94,7 +92,7 @@ public class MoveTransformSelect implements Mapper {
         for (Object o : results) {
             merge.merge(o, tmp);
         }
-        return NodeUtils.toObject(move.apply(Path.root(), tmp));
+        return NodeUtils.toObject(move.apply(tmp));
     }
 
     @SuppressWarnings("unchecked")

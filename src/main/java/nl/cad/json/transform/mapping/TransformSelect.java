@@ -17,8 +17,18 @@ package nl.cad.json.transform.mapping;
 
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.select.Select;
+import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.ValuePathTransform;
 
+/**
+ * The select of the Transform select is tested against each node and if
+ * it matches, the transform is executed. For arrays and objects the
+ * select is tested by default at the start of the node, however for
+ * some purposes its best to test at the end of the node. The post
+ * boolean makes the transform select execute at the end of the node.
+ * 
+ * Works with the {@link MappingTransform}.
+ */
 public class TransformSelect {
 
     private ValuePathTransform transform;

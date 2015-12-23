@@ -34,7 +34,7 @@ public class MoveTransform extends AbstractVisitor implements Transform {
     }
 
     @Override
-    public Object apply(Path path, Object source) {
+    public Object apply(Object source) {
         if (!targetPath.isRoot()) {
             Map<String, Object> target = NodeUtils.newObject();
             targetPath.create(target);

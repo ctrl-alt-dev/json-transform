@@ -15,7 +15,6 @@
  */
 package nl.cad.json.transform.transforms;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
 
 public class ValuePathTransformAdapter implements Transform {
@@ -27,7 +26,7 @@ public class ValuePathTransformAdapter implements Transform {
     }
 
     @Override
-    public Object apply(Path path, Object value) {
+    public Object apply(Object value) {
         ValuePath source = new ValuePath(value);
         ValuePath target = new ValuePath(null);
         vpt.apply(source, target);

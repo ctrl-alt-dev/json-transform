@@ -15,7 +15,6 @@
  */
 package nl.cad.json.transform.transforms;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.visitor.AbstractVisitor;
 import nl.cad.json.transform.visitor.impl.IdentityVisitor;
 
@@ -25,7 +24,7 @@ import nl.cad.json.transform.visitor.impl.IdentityVisitor;
 public class IdentityTransform extends AbstractVisitor implements Transform {
 
     @Override
-    public Object apply(Path path, Object source) {
+    public Object apply(Object source) {
         return visit(source, new IdentityVisitor());
     }
 
