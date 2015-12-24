@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
  * container document source for named (and Future) documents.
  * Use this together with the {@link NamedSource}.
  */
-public final class MultiSource implements DocumentSource {
+public final class MultiSource implements DocumentSource, CompositeSource {
 
     public class FutureDocumentException extends RuntimeException {
         public FutureDocumentException(Exception ex) {

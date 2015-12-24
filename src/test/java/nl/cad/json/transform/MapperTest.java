@@ -19,15 +19,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import nl.cad.json.transform.java.PojoToDocumentMapperTest;
 import nl.cad.json.transform.mapping.builder.MappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.JavaSource;
 import nl.cad.json.transform.mapping.source.MultiSource;
+import nl.cad.json.transform.mapping.source.SplitSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.merge.MergeFactory;
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.template.CallbackTemplate;
 import nl.cad.json.transform.template.handler.SelectHandler;
@@ -206,6 +209,22 @@ public class MapperTest {
         Map<String, Object> src = TestUtils.parseJson("/json/identity.json");
 
         assertEquals("{value=null}", String.valueOf(mapping.getDocument(new ValueSource(src))));
+    }
+
+    @Test
+    public void shouldSplitSource() {
+
+        DocumentSource mapping = MappingBuilder.join(
+                MappingBuilder.seq().move(Path.fromString("left")).namedSource("left"),
+                MappingBuilder.seq().move(Path.fromString("right")).namedSource("right")
+                );
+
+        Map<String, Select> selects = new TreeMap<String, Select>();
+        selects.put("left", SelectBuilder.select().property("list").build());
+        selects.put("right", SelectBuilder.select().property("listOfObjects").build());
+        SplitSource ss = new SplitSource(new ValueSource(TestUtils.parseJson("/json/identity.json")), selects);
+
+        assertEquals("{left=[1, 2, 3, 4], right=[{name=erik}, {name=fluffy}]}", String.valueOf(mapping.getDocument(ss)));
     }
 
 }

@@ -38,7 +38,7 @@ public interface Select {
      * @param source the source.
      * @return the matching path and value.
      */
-    ValuePath selectOne(Map<String, Object> source);
+    ValuePath selectOne(Object source);
 
     /**
      * matches the given source against this selection.

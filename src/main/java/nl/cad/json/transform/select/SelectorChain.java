@@ -73,10 +73,10 @@ public class SelectorChain extends AbstractVisitor implements Select {
     }
 
     @Override
-    public ValuePath selectOne(Map<String, Object> source) {
+    public ValuePath selectOne(Object source) {
         List<ValuePath> results = select(source);
         if (results.size() != 1) {
-            throw new SelectionException();
+            throw new SelectionException(results.size());
         }
         return results.get(0);
     }

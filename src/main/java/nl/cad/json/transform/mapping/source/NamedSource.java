@@ -15,8 +15,9 @@
  */
 package nl.cad.json.transform.mapping.source;
 
+
 /**
- * A named document source, for use with {@link MultiSource}.
+ * A named document source, for use with {@link MultiSource} or {@link SplitSource}.
  */
 public class NamedSource implements DocumentSource {
 
@@ -28,7 +29,7 @@ public class NamedSource implements DocumentSource {
 
     @Override
     public Object getDocument(DocumentSource input) {
-        return ((MultiSource) input).getDocument(name);
+        return ((CompositeSource) input).getDocument(name);
     }
 
 }

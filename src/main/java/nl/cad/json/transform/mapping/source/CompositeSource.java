@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.select;
+package nl.cad.json.transform.mapping.source;
 
-public class SelectionException extends RuntimeException {
+public interface CompositeSource {
 
-    public SelectionException(int cnt) {
-        super(String.valueOf(cnt));
-    }
-
+    Object getDocument(String name);
+    
 }
