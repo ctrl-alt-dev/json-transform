@@ -15,6 +15,9 @@
  */
 package nl.cad.json.transform.mapping.source;
 
+/**
+ * A composite source gives access to documents by name.
+ */
 public interface CompositeSource {
 
     Object getDocument(String name);

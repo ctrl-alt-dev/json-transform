@@ -19,6 +19,10 @@ import java.util.Map;
 
 import nl.cad.json.transform.select.Select;
 
+/**
+ * Splits a single DocumentSource into multiple named ones, each allowing
+ * a select to specify the contents. Use {@link NamedSource} to retrieve the contents.
+ */
 public class SplitSource implements DocumentSource, CompositeSource {
 
     public static class UndefinedSplitSourceNameException extends RuntimeException {
