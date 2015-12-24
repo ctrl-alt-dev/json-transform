@@ -76,7 +76,9 @@ public class MoveTransformSelect implements Transform {
         if (results.isEmpty()) {
             results.add(transform.apply(null));
         }
-        if (NodeUtils.isAllArray(results)) {
+        if (NodeUtils.isAllNull(results)) {
+            return move(null);
+        } else if (NodeUtils.isAllArray(results)) {
             return move(mergeArrays(results));
         } else if (NodeUtils.isAllObjects(results)) {
             return move(joinObjects(results));

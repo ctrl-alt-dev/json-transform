@@ -198,4 +198,14 @@ public class MapperTest {
                 String.valueOf(mapping.getDocument(new ValueSource(src))));
     }
 
+    @Test
+    public void shouldHaveNullResultWhenNoMatch() {
+        DocumentSource mapping = MappingBuilder.seq()
+                .transform(Path.fromString("value"), new IdentityTransform(), SelectBuilder.select().property("doesnotexist").build()).build();
+
+        Map<String, Object> src = TestUtils.parseJson("/json/identity.json");
+
+        assertEquals("{value=null}", String.valueOf(mapping.getDocument(new ValueSource(src))));
+    }
+
 }

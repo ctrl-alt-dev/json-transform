@@ -99,6 +99,15 @@ public final class NodeUtils {
         return true;
     }
 
+    public static boolean isAllNull(List<Object> results) {
+        for (Object o : results) {
+            if (!NodeUtils.isNull(o)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean isAllArray(List<Object> results) {
         for (Object o : results) {
             if (!NodeUtils.isArray(o)) {
