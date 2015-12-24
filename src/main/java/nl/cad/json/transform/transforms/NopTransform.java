@@ -15,17 +15,21 @@
  */
 package nl.cad.json.transform.transforms;
 
-import nl.cad.json.transform.visitor.AbstractVisitor;
-import nl.cad.json.transform.visitor.impl.IdentityVisitor;
+import nl.cad.json.transform.path.ValuePath;
 
 /**
- * deep copies the input to the output.
+ * Does nothing. Simply passes the input to the output.
  */
-public class IdentityTransform extends AbstractVisitor implements Transform {
+public class NopTransform implements Transform, ValuePathTransform {
 
     @Override
     public Object apply(Object source) {
-        return visit(source, new IdentityVisitor());
+        return source;
+    }
+
+    @Override
+    public void apply(ValuePath source, ValuePath target) {
+        target.set(source.get());
     }
 
 }
