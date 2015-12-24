@@ -16,6 +16,7 @@
 package nl.cad.json.transform;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
@@ -55,6 +56,28 @@ public class MapperTest {
         public TransformedPojo(InputPojo a) {
             b = a.a;
         }
+    }
+
+    @Test
+    public void shouldCopy() {
+        DocumentSource src = MappingBuilder.seq().copy().build();
+
+        Map<String, Object> source = TestUtils.parseJson("/json/one.json");
+        Object out = src.getDocument(new ValueSource(source));
+
+        assertEquals("{one=1}", out.toString());
+        assertFalse(out == source);
+    }
+
+    @Test
+    public void shouldMove() {
+        DocumentSource src = MappingBuilder.seq().move(Path.root()).build();
+
+        Map<String, Object> source = TestUtils.parseJson("/json/one.json");
+        Object out = src.getDocument(new ValueSource(source));
+
+        assertEquals("{one=1}", out.toString());
+        assertFalse(out == source);
     }
 
     @Test

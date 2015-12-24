@@ -37,6 +37,7 @@ import nl.cad.json.transform.template.Template;
 import nl.cad.json.transform.transforms.IdentityTransform;
 import nl.cad.json.transform.transforms.JavaTransform;
 import nl.cad.json.transform.transforms.MappingTransform;
+import nl.cad.json.transform.transforms.NopTransform;
 import nl.cad.json.transform.transforms.TemplateAdapter;
 import nl.cad.json.transform.transforms.Transform;
 import nl.cad.json.transform.transforms.ValuePathTransform;
@@ -162,7 +163,7 @@ public class MappingBuilder {
      * @return the builder.
      */
     public MappingBuilder copy() {
-        return this.move(Path.root());
+        return this.transform(Path.root(), new IdentityTransform(), SelectBuilder.selectRoot());
     }
 
     /**
@@ -171,7 +172,7 @@ public class MappingBuilder {
      * @return the builder.
      */
     public MappingBuilder move(Path path) {
-        return this.transform(path, new IdentityTransform(), SelectBuilder.selectRoot());
+        return this.transform(path, new NopTransform(), SelectBuilder.selectRoot());
     }
 
     /**
@@ -181,7 +182,7 @@ public class MappingBuilder {
      * @return the builder.
      */
     public MappingBuilder move(Path path, Select select) {
-        return this.transform(path, new IdentityTransform(), select);
+        return this.transform(path, new NopTransform(), select);
     }
 
     /**
