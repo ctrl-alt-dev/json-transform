@@ -15,25 +15,30 @@
  */
 package nl.cad.json.transform.mapping.builder;
 
+import java.util.Map;
+import java.util.TreeMap;
+
+import nl.cad.json.transform.mapping.source.DocumentSource;
+import nl.cad.json.transform.mapping.source.SplitSource;
 import nl.cad.json.transform.select.Select;
-import nl.cad.json.transform.transforms.Transform;
 
-/**
- * Allows the creation of multiple selects as input for the move-transform-select.
- */
-public interface MultiSelectBuilder {
+public class SplitSourceBuilder {
 
-    /**
-     * adds one or more selects.
-     * @param select the selects.
-     * @return the builder.
-     */
-    MultiSelectBuilder select(Select... select);
+    private DocumentSource source;
+    private Map<String, Select> selects;
 
-    /**
-     * finishes this builder.
-     * @return the created transform.
-     */
-    Transform build();
+    protected SplitSourceBuilder(DocumentSource source) {
+        this.source = source;
+        this.selects = new TreeMap<String, Select>();
+    }
+
+    public SplitSourceBuilder add(String name, Select select) {
+        selects.put(name, select);
+        return this;
+    }
+
+    public SplitSource build() {
+        return new SplitSource(source, selects);
+    }
 
 }

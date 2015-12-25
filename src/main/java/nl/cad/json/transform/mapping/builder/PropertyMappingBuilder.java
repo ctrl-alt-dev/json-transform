@@ -28,28 +28,28 @@ import nl.cad.json.transform.transforms.convert.DeleteNodeConversion;
 import nl.cad.json.transform.transforms.convert.OverwriteValueConversion;
 import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
 
-public class DetailMappingBuilder {
+public class PropertyMappingBuilder {
 
-    public static DetailMappingBuilder map() {
-        return new DetailMappingBuilder();
+    public static PropertyMappingBuilder map() {
+        return new PropertyMappingBuilder();
     }
 
     private List<TransformSelect> transformSelects;
 
-    public DetailMappingBuilder() {
+    public PropertyMappingBuilder() {
         transformSelects = new ArrayList<TransformSelect>();
     }
 
-    public List<TransformSelect> build() {
-        return new ArrayList<TransformSelect>(transformSelects);
+    public MappingTransform build() {
+        return new MappingTransform(new ArrayList<TransformSelect>(transformSelects));
     }
 
-    public DetailMappingBuilder mapping(ValuePathTransform transform, Select select) {
+    public PropertyMappingBuilder mapping(ValuePathTransform transform, Select select) {
         transformSelects.add(new TransformSelect(transform, select));
         return this;
     }
 
-    public DetailMappingBuilder postMapping(ValuePathTransform transform, Select select) {
+    public PropertyMappingBuilder postMapping(ValuePathTransform transform, Select select) {
         transformSelects.add(new TransformSelect(transform, select, true));
         return this;
     }
@@ -61,12 +61,12 @@ public class DetailMappingBuilder {
      * @param value the type value.
      * @return the mapper.
      */
-    public DetailMappingBuilder objectMapping(ValuePathTransform transform, String property, String value) {
+    public PropertyMappingBuilder objectMapping(ValuePathTransform transform, String property, String value) {
         return mapping(transform, SelectBuilder.select().objectPropertyValue(property, value).build());
     }
 
-    public DetailMappingBuilder objectMapping(List<TransformSelect> transformSelects, String property, String value) {
-        return mapping(new MappingTransform(transformSelects), SelectBuilder.select().objectPropertyValue(property, value).build());
+    public PropertyMappingBuilder objectMapping(MappingTransform mapping, String property, String value) {
+        return mapping(mapping, SelectBuilder.select().objectPropertyValue(property, value).build());
     }
 
     /**
@@ -75,27 +75,31 @@ public class DetailMappingBuilder {
      * @param fromName the name to rename from.
      * @return the mapper.
      */
-    public DetailMappingBuilder rename(final String toName,final String fromName) {
+    public PropertyMappingBuilder rename(final String toName,final String fromName) {
         return mapping(new RenamePropertyConversion(toName), SelectBuilder.select().property(fromName).build());
     }
 
-    public DetailMappingBuilder overwrite(final String property, final String targetValue) {
+    public PropertyMappingBuilder overwrite(final String property, final String targetValue) {
         return mapping(new OverwriteValueConversion(targetValue), SelectBuilder.select().property(property).build());
     }
 
-    public DetailMappingBuilder overwrite(final String property, String value, final String targetValue) {
+    public PropertyMappingBuilder overwrite(final String property, String value, final String targetValue) {
         return mapping(new OverwriteValueConversion(targetValue), SelectBuilder.select().propertyValue(property, value).build());
     }
 
-    public DetailMappingBuilder recurse(final String property, final List<TransformSelect> mappers) {
+    public PropertyMappingBuilder recurse(final String property, final List<TransformSelect> mappers) {
         return mapping(new MappingTransform(mappers), SelectBuilder.select().property(property).build());
     }
 
-    public DetailMappingBuilder delete(String property) {
+    public PropertyMappingBuilder recurse(final String property, MappingTransform mappers) {
+        return mapping(mappers, SelectBuilder.select().property(property).build());
+    }
+
+    public PropertyMappingBuilder delete(String property) {
         return mapping(new DeleteNodeConversion(), SelectBuilder.select().property(property).build());
     }
 
-    public DetailMappingBuilder add(String property, Object value) {
+    public PropertyMappingBuilder add(String property, Object value) {
         return postMapping(new AddPropertyConversion(property, value), SelectBuilder.selectRoot());
     }
 

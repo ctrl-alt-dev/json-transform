@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.mapping.TransformSelect;
-import nl.cad.json.transform.mapping.builder.DetailMappingBuilder;
+import nl.cad.json.transform.mapping.builder.CompositeMappingBuilder;
 import nl.cad.json.transform.mapping.builder.MappingBuilder;
+import nl.cad.json.transform.mapping.builder.PropertyMappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.select.SelectBuilder;
+import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.utils.TestUtils;
 
 import org.junit.Test;
@@ -39,26 +41,28 @@ public class DetailMappingTest {
 
         List<TransformSelect> mappers = new ArrayList<TransformSelect>();
         
-        List<TransformSelect> itemMapping = DetailMappingBuilder.map()
+        MappingTransform itemMapping = PropertyMappingBuilder.map()
                 .rename("to", "from")
                 .rename("class", "type")
                 .overwrite("overwrite", "some", "censored")
                 .add("added", Boolean.TRUE)
                 .build();
-        List<TransformSelect> nrMapping = DetailMappingBuilder.map()
+        MappingTransform nrMapping = PropertyMappingBuilder.map()
                 .rename("nr", "number")
                 .rename("class", "type")
                 .delete("delete")
                 .recurse("children", mappers)
                 .build();
-        List<TransformSelect> mapping = DetailMappingBuilder.map()
+        MappingTransform mapping = PropertyMappingBuilder.map()
                 .objectMapping(itemMapping, "type", "Item")
                 .objectMapping(nrMapping, "type", "Number")
                 .build();
         
-        mappers.addAll(mapping);
+        mappers.addAll(mapping.getTransformSelects());
 
-        DocumentSource build = MappingBuilder.seq().map(Path.root(), mapping, SelectBuilder.select().property("list").build()).build();
+        DocumentSource build = CompositeMappingBuilder.sequence(
+                MappingBuilder.map(Path.root(), mapping, SelectBuilder.select().property("list").build())
+                ).build();
 
         Map<String, Object> source = TestUtils.parseJson("/json/objectMapping.json");
 

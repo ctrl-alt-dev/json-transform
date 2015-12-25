@@ -19,19 +19,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import nl.cad.json.transform.mapping.MoveTransformSelect;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.select.Select;
+import nl.cad.json.transform.transforms.IdentityTransform;
+import nl.cad.json.transform.transforms.NopTransform;
 import nl.cad.json.transform.transforms.Transform;
 
 public class MultiBuilder implements MultiMoveBuilder, MultiSelectBuilder {
 
-    private MappingBuilder mb;
     private List<Path> paths;
     private List<Select> selects;
     private Transform transform;
 
-    public MultiBuilder(MappingBuilder mb) {
-        this.mb = mb;
+    public MultiBuilder() {
         this.paths = new ArrayList<Path>();
         this.selects = new ArrayList<Select>();
     }
@@ -55,8 +56,18 @@ public class MultiBuilder implements MultiMoveBuilder, MultiSelectBuilder {
     }
 
     @Override
-    public MappingBuilder done() {
-        return mb.transform(paths, transform, selects);
+    public MultiSelectBuilder identity() {
+        return transform(new IdentityTransform());
+    }
+
+    @Override
+    public MultiSelectBuilder nop() {
+        return transform(new NopTransform());
+    }
+
+    @Override
+    public Transform build() {
+        return new MoveTransformSelect(paths, transform, selects);
     }
 
 }

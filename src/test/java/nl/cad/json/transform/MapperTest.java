@@ -15,15 +15,24 @@
  */
 package nl.cad.json.transform;
 
+import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.join;
+import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.parallel;
+import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.sequence;
+import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.split;
+import static nl.cad.json.transform.mapping.builder.MappingBuilder.copy;
+import static nl.cad.json.transform.mapping.builder.MappingBuilder.javaTransform;
+import static nl.cad.json.transform.mapping.builder.MappingBuilder.manyToMany;
+import static nl.cad.json.transform.mapping.builder.MappingBuilder.map;
+import static nl.cad.json.transform.mapping.builder.MappingBuilder.move;
+import static nl.cad.json.transform.mapping.builder.MappingBuilder.template;
+import static nl.cad.json.transform.mapping.builder.MappingBuilder.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.TreeMap;
 
 import nl.cad.json.transform.java.PojoToDocumentMapperTest;
-import nl.cad.json.transform.mapping.builder.MappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.JavaSource;
 import nl.cad.json.transform.mapping.source.MultiSource;
@@ -31,7 +40,6 @@ import nl.cad.json.transform.mapping.source.SplitSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.merge.MergeFactory;
 import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.template.CallbackTemplate;
 import nl.cad.json.transform.template.handler.SelectHandler;
@@ -60,7 +68,7 @@ public class MapperTest {
 
     @Test
     public void shouldCopy() {
-        DocumentSource src = MappingBuilder.seq().copy().build();
+        DocumentSource src = sequence(copy()).build();
 
         Map<String, Object> source = TestUtils.parseJson("/json/one.json");
         Object out = src.getDocument(new ValueSource(source));
@@ -71,7 +79,7 @@ public class MapperTest {
 
     @Test
     public void shouldMove() {
-        DocumentSource src = MappingBuilder.seq().move(Path.root()).build();
+        DocumentSource src = sequence(move(Path.root())).build();
 
         Map<String, Object> source = TestUtils.parseJson("/json/one.json");
         Object out = src.getDocument(new ValueSource(source));
@@ -82,8 +90,7 @@ public class MapperTest {
 
     @Test
     public void shouldMap() {
-        DocumentSource src = MappingBuilder.seq()
-                .move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromString("property(\"object\")")).build();
+        DocumentSource src = sequence(move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromString("property(\"object\")"))).build();
 
         Object out = src.getDocument(new ValueSource(TestUtils.parseJson("/json/identity.json")));
         //
@@ -92,9 +99,10 @@ public class MapperTest {
 
     @Test
     public void shouldMapSequence() {
-        DocumentSource src = MappingBuilder.seq()
-                .move(Path.fromString("down.under"), SelectBuilder.fromString("property(\"over\")"))
-                .move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromString("property(\"object\")")).build();
+        DocumentSource src = sequence(
+                move(Path.fromString("down.under"), SelectBuilder.fromString("property(\"over\")")),
+                move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromString("property(\"object\")"))
+                ).build();
         //
         Object out = src.getDocument(new ValueSource(TestUtils.parseJson("/json/identity.json")));
         //
@@ -103,8 +111,9 @@ public class MapperTest {
 
     @Test
     public void shouldConvertViaSelect() {
-        DocumentSource mb = MappingBuilder.seq()
-                .map(Path.fromString("one"), new ToStringValueConversion(), SelectBuilder.fromString("property(\"one\")")).build();
+        DocumentSource mb = sequence(
+                map(Path.fromString("one"), new ToStringValueConversion(), SelectBuilder.fromString("property(\"one\")"))
+                ).build();
         //
         Map<String, Object> src = TestUtils.parseJson("/json/one.json");
         Map<String, Object> out = NodeUtils.toObject(mb.getDocument(new ValueSource(src)));
@@ -117,10 +126,10 @@ public class MapperTest {
     
     @Test
     public void shouldFlattenComposite() {
-        DocumentSource mb = MappingBuilder.seq()
-                .transform(Path.fromString("components"),
+        DocumentSource mb = sequence(
+                transform(Path.fromString("components"),
                         new FlattenCompositeTransform("components"),
-                        SelectBuilder.select().root().property("components").build()
+                        SelectBuilder.select().root().property("components").build())
                 ).build();
 
         Map<String, Object> src = TestUtils.parseJson("/json/composite.json");
@@ -132,9 +141,10 @@ public class MapperTest {
 
     @Test
     public void shouldPar() {
-        DocumentSource mb = MappingBuilder.par(MergeFactory.join())
-                .copy()
-                .move(Path.fromString("some.copy")).build();
+        DocumentSource mb = parallel(MergeFactory.join(),
+                copy(),
+                move(Path.fromString("some.copy"))
+                ).build();
 
         Map<String, Object> src = TestUtils.parseJson("/json/arrays.json");
         Map<String, Object> out = NodeUtils.toObject(mb.getDocument(new ValueSource(src)));
@@ -145,9 +155,9 @@ public class MapperTest {
     @Test
     public void shouldJoinParSeqWithMultiSource() {
 
-        DocumentSource mb = MappingBuilder.join(
-                MappingBuilder.par(MergeFactory.join()).copy().move(Path.fromString("some.copy")).namedSource("left"),
-                MappingBuilder.seq().copy().move(Path.fromString("some.too")).namedSource("right")
+        DocumentSource mb = join(
+                parallel(MergeFactory.join(), copy(), move(Path.fromString("some.copy"))).namedSource("left"),
+                sequence(copy(), move(Path.fromString("some.too"))).namedSource("right")
                 );
         //
         MultiSource ms = new MultiSource();
@@ -161,9 +171,8 @@ public class MapperTest {
 
     @Test
     public void shouldSeqSeq() {
-        DocumentSource ds = MappingBuilder
-                .seq().move(Path.fromString("some"))
-                .link(MappingBuilder.seq().move(Path.fromString("where")).build());
+        DocumentSource ds = sequence(move(Path.fromString("some")))
+                .link(sequence(move(Path.fromString("where"))).build());
 
         Object document = ds.getDocument(new ValueSource(TestUtils.parseJson("/json/one.json")));
 
@@ -178,7 +187,7 @@ public class MapperTest {
 
         CallbackTemplate template = new CallbackTemplate(temp, new SelectHandler());
 
-        DocumentSource ds = MappingBuilder.seq().template(template).build();
+        DocumentSource ds = sequence(template(template)).build();
 
         assertEquals(
                 "{results={a=some-value}, value=nasigoreng}",
@@ -188,7 +197,7 @@ public class MapperTest {
 
     @Test
     public void shouldMapPojo() {
-        DocumentSource move = MappingBuilder.seq().move(Path.fromString("somewhere")).build();
+        DocumentSource move = sequence(move(Path.fromString("somewhere"))).build();
 
         String result = String.valueOf(move.getDocument(new JavaSource(new PojoToDocumentMapperTest.SomeType())));
 
@@ -199,24 +208,32 @@ public class MapperTest {
     public void shouldTransformViaJava() {
         Map<String, Object> map = NodeUtils.newObject();
         map.put("a", "pindakaas");
-        DocumentSource java = MappingBuilder.seq().javaTransform(
+        DocumentSource java = sequence(javaTransform(
                 Path.root(),
                 InputPojo.class, src -> new TransformedPojo(src),
                 SelectBuilder.select().root().build()
-                ).build();
+                )).build();
 
         Map<String, Object> document = NodeUtils.toObject(java.getDocument(new ValueSource(map)));
 
         assertEquals("{b=pindakaas}", String.valueOf(document));
     }
 
+    /**
+     * selects multiple paths from the same document,
+     * feeds them through the same transform,
+     * and moves the joined results to two paths in the target document.
+     * Note the use of the manyToMany() builder.
+     */
     @Test
     public void shouldManyToManyMap() {
-        DocumentSource mapping = MappingBuilder.seq().manyToMany()
+        DocumentSource mapping = sequence(manyToMany()
                 .move(Path.fromString("left"), Path.fromString("right"))
-                .transform(new IdentityTransform()).select(
+                .transform(new IdentityTransform())
+                .select(
                         SelectBuilder.select().property("list").build(),
-                        SelectBuilder.select().property("listOfObjects").build()).done().build();
+                        SelectBuilder.select().property("listOfObjects").build()
+                ).build()).build();
         //
         Map<String, Object> src = TestUtils.parseJson("/json/identity.json");
         //
@@ -226,8 +243,9 @@ public class MapperTest {
 
     @Test
     public void shouldHaveNullResultWhenNoMatch() {
-        DocumentSource mapping = MappingBuilder.seq()
-                .transform(Path.fromString("value"), new IdentityTransform(), SelectBuilder.select().property("doesnotexist").build()).build();
+        DocumentSource mapping = sequence(
+                transform(Path.fromString("value"), new IdentityTransform(), SelectBuilder.select().property("doesnotexist").build()))
+                .build();
 
         Map<String, Object> src = TestUtils.parseJson("/json/identity.json");
 
@@ -237,16 +255,17 @@ public class MapperTest {
     @Test
     public void shouldSplitSource() {
 
-        DocumentSource mapping = MappingBuilder.join(
-                MappingBuilder.seq().move(Path.fromString("left")).namedSource("left"),
-                MappingBuilder.seq().move(Path.fromString("right")).namedSource("right")
+        DocumentSource mapping = join(
+                sequence(move(Path.fromString("left"))).namedSource("left"),
+                sequence(move(Path.fromString("right"))).namedSource("right")
                 );
 
-        Map<String, Select> selects = new TreeMap<String, Select>();
-        selects.put("left", SelectBuilder.select().property("list").build());
-        selects.put("right", SelectBuilder.select().property("listOfObjects").build());
-        SplitSource ss = new SplitSource(new ValueSource(TestUtils.parseJson("/json/identity.json")), selects);
-
+        DocumentSource source = new ValueSource(TestUtils.parseJson("/json/identity.json"));
+        SplitSource ss = split(source)
+                .add("left", SelectBuilder.select().property("list").build())
+                .add("right",SelectBuilder.select().property("listOfObjects").build())
+                .build();
+        
         assertEquals("{left=[1, 2, 3, 4], right=[{name=erik}, {name=fluffy}]}", String.valueOf(mapping.getDocument(ss)));
     }
 

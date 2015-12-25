@@ -18,9 +18,38 @@ package nl.cad.json.transform.mapping.builder;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.Transform;
 
+/**
+ * The multi-move builder is used for move-transform-selects
+ * that have multiple selects into the same transform and/or
+ * multiple target paths as output.
+ */
 public interface MultiMoveBuilder {
 
+    /**
+     * adds another destination path to the builder.
+     * @param path the path.
+     * @return the builder.
+     */
     MultiMoveBuilder move(Path... path);
     
+    /**
+     * adds a transform to the builder.
+     * @param transform the transform.
+     * @return the select builder.
+     */
     MultiSelectBuilder transform(Transform transform);
+
+    /**
+     * adds an identity transform to the builder.
+     * @param transform the transform.
+     * @return the select builder.
+     */
+    MultiSelectBuilder identity();
+
+    /**
+     * adds a no-operation transform to the builder.
+     * @param transform the transform.
+     * @return the select builder.
+     */
+    MultiSelectBuilder nop();
 }

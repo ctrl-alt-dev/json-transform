@@ -15,6 +15,7 @@
  */
 package nl.cad.json.transform.transforms;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.cad.json.transform.mapping.TransformSelect;
@@ -44,6 +45,10 @@ public class MappingTransform extends AbstractVisitor implements Transform, Valu
         MappingVisitor visitor = new MappingVisitor(transformSelects);
         Object result = visit(source.get(), visitor);
         target.set(result);
+    }
+
+    public List<TransformSelect> getTransformSelects() {
+        return new ArrayList<>(transformSelects);
     }
 
 }
