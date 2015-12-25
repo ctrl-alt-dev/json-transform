@@ -19,7 +19,7 @@ package nl.cad.json.transform.transforms;
 public interface Transform {
 
     /**
-     * transforms the source object located at path.
+     * transforms the source object.
      * @param source the source object.
      * @return the transformed source object.
      */

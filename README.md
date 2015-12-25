@@ -20,7 +20,9 @@ Map<String, Object> input = (Map<String, Object>) objectMapper.readValue(documen
 //
 // Build the mapping.
 //
-DocumentSource mapping = MappingBuilder.seq().move(Path.fromString("elsewhere")).build();
+DocumentSource mapping = CompositeMappingBuilder.sequence(
+        MappingBuilder.move(Path.fromString("elsewhere"))
+    ).build();
 //
 // Apply the mapping: pull the output from the input.
 //
