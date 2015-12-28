@@ -15,7 +15,7 @@
  */
 package nl.cad.json.transform.select.selector;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 
 public class PropertyValueSelector implements Selector {
 
@@ -28,9 +28,9 @@ public class PropertyValueSelector implements Selector {
     }
 
     @Override
-    public boolean matches(Path path, Object value) {
-        if (path.isProperty()) {
-            return property.equals(path.getTop()) && (this.value.equals(value));
+    public boolean matches(ValuePath path) {
+        if (path.path().isProperty()) {
+            return property.equals(path.path().getTop()) && (this.value.equals(path.value()));
         }
         return false;
     }

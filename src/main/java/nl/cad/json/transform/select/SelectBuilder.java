@@ -18,6 +18,14 @@ package nl.cad.json.transform.select;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.cad.json.transform.select.jsonpath.AnyNodesSelector;
+import nl.cad.json.transform.select.jsonpath.BasicJsonPathSelector;
+import nl.cad.json.transform.select.jsonpath.JsonPathTokenizer;
+import nl.cad.json.transform.select.jsonpath.JsonPathTokenizer.JsonPathToken;
+import nl.cad.json.transform.select.jsonpath.NameType;
+import nl.cad.json.transform.select.jsonpath.SliceJsonPathSelector;
+import nl.cad.json.transform.select.jsonpath.SubselectSelector;
+import nl.cad.json.transform.select.jsonpath.ValueType;
 import nl.cad.json.transform.select.parse.SelectTokenizer;
 import nl.cad.json.transform.select.parse.Token;
 import nl.cad.json.transform.select.selector.AndSelector;
@@ -150,6 +158,25 @@ public class SelectBuilder {
         return this;
     }
 
+    public SelectBuilder jsonPath(NameType nameType, Object arg, ValueType valueType) {
+        selectors.add(new BasicJsonPathSelector(nameType, arg, valueType));
+        return this;
+    }
+
+    public SelectBuilder anyNodes() {
+        selectors.add(new AnyNodesSelector());
+        return this;
+    }
+
+    public SelectBuilder expression(Select subselect) {
+        selectors.add(new SubselectSelector(subselect));
+        return this;
+    }
+
+    private void slice(List<Integer> argument) {
+        selectors.add(new SliceJsonPathSelector(argument.toArray(new Integer[argument.size()])));
+    }
+
     public Select build() {
         return one ? new SingleResultSelectorChain(buildComposite()) : new SelectorChain(buildComposite());
     }
@@ -162,6 +189,32 @@ public class SelectBuilder {
         SelectBuilder builder = select();
         for (Token t : SelectTokenizer.tokenize(str)) {
             t.invoke(builder);
+        }
+        return builder.build();
+    }
+
+    public static Select fromJsonPath(String str) {
+        return buildJsonPath(JsonPathTokenizer.tokenize(str));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Select buildJsonPath(List<JsonPathToken> tokenize) {
+        SelectBuilder builder = select();
+        for (JsonPathToken t : tokenize) {
+            switch (t.getNameType()) {
+            case EXPRESSION:
+                builder.expression(buildJsonPath((List<JsonPathToken>) t.getArgument()));
+                break;
+            case SLICE:
+                builder.slice((List<Integer>) t.getArgument());
+                break;
+            case NESTED_NODES:
+                builder.anyNodes();
+                break;
+            default:
+                builder.jsonPath(t.getNameType(), t.getArgument(), t.getValueType());
+                break;
+            }
         }
         return builder.build();
     }

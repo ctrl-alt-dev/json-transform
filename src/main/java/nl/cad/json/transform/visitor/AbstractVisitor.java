@@ -63,11 +63,9 @@ public class AbstractVisitor {
     }
 
     public Object visit(Object node, ValuePathVisitor v, Object targetNode) {
-        System.out.println(v + " vp: " + node);
         ValuePath source = new ValuePath(node);
         ValuePath target = new ValuePath(targetNode);
         this.doVisit(v, source, target);
-        System.out.println(v + " vp:-> " + target.value());
         return target.value();
     }
 
@@ -76,7 +74,6 @@ public class AbstractVisitor {
     }
 
     private void doVisit(ValuePathVisitor v, ValuePath source, ValuePath target) {
-        System.out.println(v + " " + source + " .. " + target);
         if (NodeUtils.isObject(source.value())) {
             visitObject(v, source, target);
         } else if (NodeUtils.isArray(source.value())) {
@@ -84,7 +81,6 @@ public class AbstractVisitor {
         } else {
             visitValue(v, source, target);
         }
-        System.out.println(v + " " + source + " -> " + target);
     }
 
     private void visitValue(ValuePathVisitor v, ValuePath source, ValuePath target) {

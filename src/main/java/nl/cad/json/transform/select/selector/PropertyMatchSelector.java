@@ -17,7 +17,7 @@ package nl.cad.json.transform.select.selector;
 
 import java.util.regex.Pattern;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 
 public class PropertyMatchSelector implements Selector {
 
@@ -28,9 +28,9 @@ public class PropertyMatchSelector implements Selector {
     }
 
     @Override
-    public boolean matches(Path path, Object value) {
-        if (path.isProperty()) {
-            return pattern.matcher((String) path.getTop()).matches();
+    public boolean matches(ValuePath path) {
+        if (path.path().isProperty()) {
+            return pattern.matcher((String) path.path().getTop()).matches();
         }
         return false;
     }

@@ -17,7 +17,7 @@ package nl.cad.json.transform.select.selector;
 
 import java.util.Map;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 
 public class ObjectPropertySelector implements Selector {
 
@@ -29,9 +29,9 @@ public class ObjectPropertySelector implements Selector {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public boolean matches(Path path, Object value) {
-        if (value instanceof Map) {
-            return ((Map) value).containsKey(property);
+    public boolean matches(ValuePath path) {
+        if (path.value() instanceof Map) {
+            return ((Map) path.value()).containsKey(property);
         }
         return false;
     }

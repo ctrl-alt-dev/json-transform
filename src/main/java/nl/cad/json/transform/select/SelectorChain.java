@@ -21,6 +21,7 @@ import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.select.jsonpath.AnyNodesSelector;
 import nl.cad.json.transform.select.selector.Selector;
 import nl.cad.json.transform.visitor.AbstractVisitor;
 
@@ -95,7 +96,15 @@ public class SelectorChain extends AbstractVisitor implements Select {
                 return false;
             }
             cnt--;
-            if (!selectors[cnt].matches(current.path(), current.value())) {
+            if (selectors[cnt] instanceof AnyNodesSelector) {
+                cnt--;
+                while (!selectors[cnt].matches(current)) {
+                    current = current.parent();
+                    if (current == null) {
+                        return false;
+                    }
+                } 
+            } else if (!selectors[cnt].matches(current)) {
                 return false;
             }
             current = current.parent();

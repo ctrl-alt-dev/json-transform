@@ -13,25 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.select.selector;
+package nl.cad.json.transform.select.jsonpath;
 
-import nl.cad.json.transform.path.ValuePath;
-
-public class OrSelector implements Selector {
-
-    private final Selector[] selectors;
-
-    public OrSelector(Selector... selectors) {
-        this.selectors = selectors;
-    }
-
-    @Override
-    public boolean matches(ValuePath path) {
-        for (Selector sel : selectors) {
-            if (sel.matches(path)) {
-                return true;
-            }
-        }
-        return false;
-    }
+public enum ValueType {
+    OBJECT_VALUE_NODE,
+    ARRAY_VALUE_NODE,
+    ANY_VALUE_NODE;
 }

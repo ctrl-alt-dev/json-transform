@@ -15,16 +15,15 @@
  */
 package nl.cad.json.transform.select.selector;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 
 public interface Selector {
 
     /**
      * matches the given path and value against this selector.
-     * @param path the path.
-     * @param value the value.
-     * @return true if the path matches the value.
+     * @param valuePath the path and value.
+     * @return true if the path matches.
      */
-    boolean matches(Path path, Object value);
+    boolean matches(ValuePath path);
     
 }

@@ -15,7 +15,7 @@
  */
 package nl.cad.json.transform.select.selector;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 
 public class AndSelector implements Selector {
 
@@ -26,9 +26,9 @@ public class AndSelector implements Selector {
     }
 
     @Override
-    public boolean matches(Path path, Object value) {
+    public boolean matches(ValuePath path) {
         for (Selector sel : selectors) {
-            if (!sel.matches(path, value)) {
+            if (!sel.matches(path)) {
                 return false;
             }
         }

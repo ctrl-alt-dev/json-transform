@@ -18,7 +18,7 @@ package nl.cad.json.transform.select.selector;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 
 public class ObjectPropertyMatchSelector implements Selector {
 
@@ -30,9 +30,9 @@ public class ObjectPropertyMatchSelector implements Selector {
 
     @SuppressWarnings({ "unchecked" })
     @Override
-    public boolean matches(Path path, Object value) {
-        if (value instanceof Map) {
-            for (String prop : ((Map<String, Object>) value).keySet()) {
+    public boolean matches(ValuePath path) {
+        if (path.value() instanceof Map) {
+            for (String prop : ((Map<String, Object>) path.value()).keySet()) {
                 if (Pattern.matches(regex, prop)) {
                     return true;
                 }

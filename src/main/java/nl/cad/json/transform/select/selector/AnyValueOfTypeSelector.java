@@ -15,7 +15,7 @@
  */
 package nl.cad.json.transform.select.selector;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.util.NodeUtils;
 
 public class AnyValueOfTypeSelector implements Selector {
@@ -27,7 +27,8 @@ public class AnyValueOfTypeSelector implements Selector {
     }
 
     @Override
-    public boolean matches(Path path, Object value) {
+    public boolean matches(ValuePath path) {
+        Object value = path.value();
         return NodeUtils.isValue(value) && type.isInstance(value);
     }
 

@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.select.selector;
+package nl.cad.json.transform.select.jsonpath;
 
 import nl.cad.json.transform.path.ValuePath;
+import nl.cad.json.transform.select.Select;
+import nl.cad.json.transform.select.selector.Selector;
 
-public class OrSelector implements Selector {
+public class SubselectSelector implements Selector {
 
-    private final Selector[] selectors;
+    private Select subselect;
 
-    public OrSelector(Selector... selectors) {
-        this.selectors = selectors;
+    public SubselectSelector(Select subselect) {
+        this.subselect = subselect;
     }
 
     @Override
     public boolean matches(ValuePath path) {
-        for (Selector sel : selectors) {
-            if (sel.matches(path)) {
-                return true;
-            }
-        }
-        return false;
+        return subselect.select(path.value()).size() > 0;
     }
+
 }

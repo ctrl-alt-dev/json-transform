@@ -90,7 +90,7 @@ public class MapperTest {
 
     @Test
     public void shouldMap() {
-        DocumentSource src = sequence(move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromString("property(\"object\")"))).build();
+        DocumentSource src = sequence(move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromJsonPath("$..object"))).build();
 
         Object out = src.getDocument(new ValueSource(TestUtils.parseJson("/json/identity.json")));
         //
@@ -100,8 +100,8 @@ public class MapperTest {
     @Test
     public void shouldMapSequence() {
         DocumentSource src = sequence(
-                move(Path.fromString("down.under"), SelectBuilder.fromString("property(\"over\")")),
-                move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromString("property(\"object\")"))
+                move(Path.fromString("down.under"), SelectBuilder.fromJsonPath("$..over")),
+                move(Path.fromString("somewhere.over.the.rainbow"), SelectBuilder.fromJsonPath("$..object"))
                 ).build();
         //
         Object out = src.getDocument(new ValueSource(TestUtils.parseJson("/json/identity.json")));
@@ -112,7 +112,7 @@ public class MapperTest {
     @Test
     public void shouldConvertViaSelect() {
         DocumentSource mb = sequence(
-                map(Path.fromString("one"), new ToStringValueConversion(), SelectBuilder.fromString("property(\"one\")"))
+                map(Path.fromString("one"), new ToStringValueConversion(), SelectBuilder.fromJsonPath("$..one"))
                 ).build();
         //
         Map<String, Object> src = TestUtils.parseJson("/json/one.json");
@@ -129,7 +129,7 @@ public class MapperTest {
         DocumentSource mb = sequence(
                 transform(Path.fromString("components"),
                         new FlattenCompositeTransform("components"),
-                        SelectBuilder.select().root().property("components").build())
+                        SelectBuilder.fromJsonPath("$.components"))
                 ).build();
 
         Map<String, Object> src = TestUtils.parseJson("/json/composite.json");

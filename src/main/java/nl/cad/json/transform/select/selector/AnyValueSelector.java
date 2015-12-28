@@ -15,14 +15,14 @@
  */
 package nl.cad.json.transform.select.selector;
 
-import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.util.NodeUtils;
 
 public class AnyValueSelector implements Selector {
 
     @Override
-    public boolean matches(Path path, Object value) {
-        return NodeUtils.isValue(value);
+    public boolean matches(ValuePath path) {
+        return NodeUtils.isValue(path.value());
     }
 
 }
