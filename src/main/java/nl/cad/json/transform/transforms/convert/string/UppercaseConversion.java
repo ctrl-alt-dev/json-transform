@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.convert.string;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;
-import nl.cad.json.transform.util.NodeUtils;
 
-public class RenamePropertyConversion implements ValuePathTransform {
-
-    private String name;
-
-    public RenamePropertyConversion(String name) {
-        this.name = name;
-    }
+public class UppercaseConversion implements ValuePathTransform {
 
     @Override
     public void apply(ValuePath source, ValuePath target) {
-        Object targetSource = target.get();
-        Path rename = source.path().parent().enter(name);
-        ValuePath renameValue = target.parent().enter(rename, null);
-        renameValue.set(targetSource == null ? source.get() : targetSource);
-        if (targetSource != null) {
-            NodeUtils.toObject(target.parent().get()).remove(target.path().getTop());
-        }
+        target.set(String.valueOf(source.get()).toUpperCase());
     }
+
 }

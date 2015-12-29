@@ -95,12 +95,17 @@ public class PropertyMappingBuilder {
         return mapping(mappers, SelectBuilder.select().property(property).build());
     }
 
-    public PropertyMappingBuilder delete(String property) {
+    public PropertyMappingBuilder delete(final String property) {
         return mapping(new DeleteNodeConversion(), SelectBuilder.select().property(property).build());
     }
 
-    public PropertyMappingBuilder add(String property, Object value) {
+    public PropertyMappingBuilder reformat(final String property, ValuePathTransform conversion) {
+        return mapping(conversion, SelectBuilder.select().property(property).build());
+    }
+
+    public PropertyMappingBuilder add(final String property, final Object value) {
         return postMapping(new AddPropertyConversion(property, value), SelectBuilder.selectRoot());
     }
+
 
 }

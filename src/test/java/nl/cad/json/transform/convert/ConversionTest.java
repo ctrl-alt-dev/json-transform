@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform;
+package nl.cad.json.transform.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import nl.cad.json.transform.path.ValuePath;
-import nl.cad.json.transform.transforms.convert.TimestampToFormattedLocalDateTimeConversion;
-import nl.cad.json.transform.transforms.convert.ToStringValueConversion;
+import nl.cad.json.transform.transforms.convert.string.ToStringValueConversion;
+import nl.cad.json.transform.transforms.convert.time.FormatTimestampToLocalDateTimeConversion;
 
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ public class ConversionTest {
     public void shouldToFormatTimestamp() {
         ValuePath source = new ValuePath(Long.valueOf(0));
         ValuePath target = new ValuePath(null);
-        new TimestampToFormattedLocalDateTimeConversion("yyyy-MM-dd").apply(source, target);
+        new FormatTimestampToLocalDateTimeConversion("yyyy-MM-dd").apply(source, target);
         assertNotNull(target.get());
         assertTrue(String.valueOf(target.get()).startsWith("19"));
     }

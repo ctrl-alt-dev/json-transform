@@ -34,7 +34,7 @@ import nl.cad.json.transform.merge.MergeFactory;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.Transform;
-import nl.cad.json.transform.transforms.convert.TimestampToFormattedLocalDateTimeConversion;
+import nl.cad.json.transform.transforms.convert.time.FormatTimestampToLocalDateTimeConversion;
 import nl.cad.json.transform.util.NodeUtils;
 import nl.cad.json.transform.utils.TestUtils;
 
@@ -44,7 +44,7 @@ public class UseCaseTest {
 
     @Test
     public void shouldDoUseCase() {
-        TimestampToFormattedLocalDateTimeConversion timestamp = new TimestampToFormattedLocalDateTimeConversion("yyyy-MM-dd HH:mm");
+        FormatTimestampToLocalDateTimeConversion timestamp = new FormatTimestampToLocalDateTimeConversion("yyyy-MM-dd HH:mm");
 
         MappingTransform containerMapping = PropertyMappingBuilder.map()
                 .overwrite("type", "CONTAINER", "Split")

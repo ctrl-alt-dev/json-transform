@@ -13,37 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.convert.time;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;
 
-public class TimestampToFormattedLocalDateTimeConversion implements ValuePathTransform {
+public class ReformatDateTimeConversion implements ValuePathTransform {
 
-    private DateTimeFormatter formatter;
+    private DateTimeFormatter from;
+    private DateTimeFormatter to;
 
-    public TimestampToFormattedLocalDateTimeConversion() {
-        this(DateTimeFormatter.ISO_DATE_TIME);
+    public ReformatDateTimeConversion(String fromFormat, String toFormat) {
+        this(DateTimeFormatter.ofPattern(fromFormat), DateTimeFormatter.ofPattern(toFormat));
     }
 
-    public TimestampToFormattedLocalDateTimeConversion(String format) {
-        this(DateTimeFormatter.ofPattern(format));
-    }
-
-    public TimestampToFormattedLocalDateTimeConversion(DateTimeFormatter formatter) {
-        this.formatter = formatter;
+    public ReformatDateTimeConversion(DateTimeFormatter from, DateTimeFormatter to) {
+        this.from = from;
+        this.to = to;
     }
 
     @Override
     public void apply(ValuePath source, ValuePath target) {
-        long timestamp = Long.valueOf(String.valueOf(source.get()));
-        LocalDateTime localDateTime = Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        target.set(formatter.format(localDateTime));
+        TemporalAccessor parse = from.parse(String.valueOf(source.get()));
+        target.set(to.format(parse));
     }
-
 }

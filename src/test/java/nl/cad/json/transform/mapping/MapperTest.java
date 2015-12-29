@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform;
+package nl.cad.json.transform.mapping;
 
 import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.join;
 import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.parallel;
@@ -45,7 +45,7 @@ import nl.cad.json.transform.template.CallbackTemplate;
 import nl.cad.json.transform.template.handler.SelectHandler;
 import nl.cad.json.transform.transforms.FlattenCompositeTransform;
 import nl.cad.json.transform.transforms.IdentityTransform;
-import nl.cad.json.transform.transforms.convert.ToStringValueConversion;
+import nl.cad.json.transform.transforms.convert.string.ToStringValueConversion;
 import nl.cad.json.transform.util.NodeUtils;
 import nl.cad.json.transform.utils.TestUtils;
 
@@ -140,7 +140,7 @@ public class MapperTest {
     }
 
     @Test
-    public void shouldPar() {
+    public void shouldMapParallel() {
         DocumentSource mb = parallel(MergeFactory.join(),
                 copy(),
                 move(Path.fromString("some.copy"))
@@ -170,7 +170,7 @@ public class MapperTest {
     }
 
     @Test
-    public void shouldSeqSeq() {
+    public void shouldLinkSequences() {
         DocumentSource ds = sequence(move(Path.fromString("some")))
                 .link(sequence(move(Path.fromString("where"))).build());
 
@@ -181,7 +181,7 @@ public class MapperTest {
     }
 
     @Test
-    public void shouldTemplate() {
+    public void shouldFillTemplate() {
         Map<String, Object> source = TestUtils.parseJson("/json/template/source.json");
         Map<String, Object> temp = TestUtils.parseJson("/json/template/single-select-template.json");
 
@@ -226,7 +226,7 @@ public class MapperTest {
      * Note the use of the manyToMany() builder.
      */
     @Test
-    public void shouldManyToManyMap() {
+    public void shouldMapManyToMany() {
         DocumentSource mapping = sequence(manyToMany()
                 .move(Path.fromString("left"), Path.fromString("right"))
                 .transform(new IdentityTransform())

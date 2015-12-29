@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform;
+package nl.cad.json.transform.transforms;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,7 +29,7 @@ import nl.cad.json.transform.utils.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TransformTest {
+public class TransformsTest {
 
     private Map<String, Object> source;
 

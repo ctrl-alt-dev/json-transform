@@ -55,11 +55,15 @@ public class MappingVisitor implements ValuePathVisitor {
     }
 
     private boolean applyTransformSelects(ValuePath source, ValuePath target, Object def) {
+        boolean found = false;
         for (TransformSelect pair : selects) {
             if (!pair.isPost() && pair.isMatch(source)) {
                 pair.apply(source, target);
-                return false;
+                found = true;
             }
+        }
+        if (found) {
+            return false;
         }
         target.set(def);
         return true;
