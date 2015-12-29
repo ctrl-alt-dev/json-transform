@@ -15,23 +15,25 @@
  */
 package nl.cad.json.transform.examples;
 
-import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.join;
-import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.parallel;
-import static nl.cad.json.transform.mapping.builder.CompositeMappingBuilder.sequence;
+import static nl.cad.json.transform.JsonTransform.join;
+import static nl.cad.json.transform.JsonTransform.jsonPath;
+import static nl.cad.json.transform.JsonTransform.mapProperties;
+import static nl.cad.json.transform.JsonTransform.multiSource;
+import static nl.cad.json.transform.JsonTransform.parallel;
+import static nl.cad.json.transform.JsonTransform.path;
+import static nl.cad.json.transform.JsonTransform.select;
+import static nl.cad.json.transform.JsonTransform.sequence;
 import static nl.cad.json.transform.mapping.builder.MappingBuilder.copy;
 import static nl.cad.json.transform.mapping.builder.MappingBuilder.exists;
 import static nl.cad.json.transform.mapping.builder.MappingBuilder.map;
 import static nl.cad.json.transform.mapping.builder.MappingBuilder.move;
 import static nl.cad.json.transform.mapping.builder.MappingBuilder.transform;
-import static nl.cad.json.transform.select.SelectBuilder.select;
 
 import java.util.Map;
 
-import nl.cad.json.transform.mapping.builder.PropertyMappingBuilder;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.MultiSource;
 import nl.cad.json.transform.merge.MergeFactory;
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.Transform;
 import nl.cad.json.transform.transforms.convert.time.FormatTimestampToLocalDateTimeConversion;
@@ -46,10 +48,10 @@ public class UseCaseTest {
     public void shouldDoUseCase() {
         FormatTimestampToLocalDateTimeConversion timestamp = new FormatTimestampToLocalDateTimeConversion("yyyy-MM-dd HH:mm");
 
-        MappingTransform containerMapping = PropertyMappingBuilder.map()
+        MappingTransform containerMapping = mapProperties()
                 .overwrite("type", "CONTAINER", "Split")
                 .build();
-        MappingTransform splitTransform = PropertyMappingBuilder.map()
+        MappingTransform splitTransform = mapProperties()
                 .objectMapping(containerMapping, "type", "CONTAINER")
                 .build();
 
@@ -65,18 +67,17 @@ public class UseCaseTest {
                 sequence(copy()).namedSource("authors"),
                 sequence(copy()).namedSource("related"),
                 parallel(MergeFactory.join(),
-                        map(Path.fromString("publication"), timestamp, select().property("publicationDate").build()),
-                        map(Path.fromString("update"), timestamp, select().property("lastUpdateDate").build()),
-                        transform(Path.fromString("title"), plainTextTransform, select().objectPropertyValue("type", "TITLE").build()),
-                        transform(Path.fromString("intro"), plainTextTransform, select().objectPropertyValue("type", "INTRO").build()),
-                        exists(Path.fromString("twitter"), select().or(select()
+                        map(path("publication"), timestamp, jsonPath("$..publicationDate")),
+                        map(path("update"), timestamp, jsonPath("$..lastUpdateDate")),
+                        transform(path("title"), plainTextTransform, select().objectPropertyValue("type", "TITLE").build()),
+                        transform(path("intro"), plainTextTransform, select().objectPropertyValue("type", "INTRO").build()),
+                        exists(path("twitter"), select().or(select()
                                 .objectPropertyValue("type", "TWITTER")
                                 .objectPropertyValue("type", "TIMELINE")
                                 ).build()),
-                        exists(Path.fromString("video"), select().objectPropertyValue("type", "VIDEO").build()),
-                        move(Path.fromString("topComponent"), select().one().objectPropertyValue("type", "PHOTO").build()),
-                        map(Path.fromString("components"), splitTransform,
-                                select().root().property("rootContainer").any().property("components").build())
+                        exists(path("video"), select().objectPropertyValue("type", "VIDEO").build()),
+                        move(path("topComponent"), select().one().objectPropertyValue("type", "PHOTO").build()),
+                        map(path("components"), splitTransform, jsonPath("$.rootContainer[*].components"))
                         ).namedSource("revision")
                 );
 
@@ -84,7 +85,7 @@ public class UseCaseTest {
         Map<String, Object> related = TestUtils.parseJson("/json/usecase/source/related.json");
         Map<String, Object> revision = TestUtils.parseJson("/json/usecase/source/revision.json");
 
-        MultiSource source = new MultiSource();
+        MultiSource source = multiSource();
         source.putDocument("authors", authors);
         source.putDocument("related", related);
         source.putDocument("revision", revision);

@@ -18,11 +18,9 @@ package nl.cad.json.transform.examples;
 import java.io.IOException;
 import java.util.Map;
 
-import nl.cad.json.transform.mapping.builder.CompositeMappingBuilder;
-import nl.cad.json.transform.mapping.builder.MappingBuilder;
+import nl.cad.json.transform.JsonTransform;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
-import nl.cad.json.transform.path.Path;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -43,8 +41,8 @@ public class MinimalExample {
         //
         // Build the mapping.
         //
-        DocumentSource mapping = CompositeMappingBuilder.sequence(
-                MappingBuilder.move(Path.fromString("elsewhere"))
+        DocumentSource mapping = JsonTransform.sequence(
+                JsonTransform.move(JsonTransform.path("elsewhere"))
                 ).build();
         //
         // Pull the output from the input.

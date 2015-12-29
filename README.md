@@ -2,11 +2,9 @@
 
 A Java centric library to do transforms and mappings on JSON documents. 
 
-## Note
+## Examples
 
-This framework is a proof of concept to get workable JSON mappings in Java. As such, it's API may be quite unstable while I figure out how to do it.
-
-## Example
+### Complete roundtrip
 
 ```java
 //
@@ -20,9 +18,9 @@ Map<String, Object> input = (Map<String, Object>) objectMapper.readValue(documen
 //
 // Build the mapping.
 //
-DocumentSource mapping = CompositeMappingBuilder.sequence(
-        MappingBuilder.move(Path.fromString("elsewhere"))
-    ).build();
+DocumentSource mapping = JsonTransform.sequence(
+      JsonTransform.move(JsonTransform.path("elsewhere"))
+      ).build();
 //
 // Apply the mapping: pull the output from the input.
 //
@@ -36,89 +34,58 @@ System.out.println(objectMapper.writeValueAsString(output));
 //
 ```
 
-## Concepts
-
-These are the mayor concepts in the framework, bottom up.
-
-### Document
-
-A JSON Document in its basic Java Form (i.e. a Map containing other Maps, Lists and values).
-
-### Select
-
-A select is an expression that selects a zero, one or more nodes in the source document.
+### Property Mapping
 
 ```java
-Select select = SelectBuilder.select().property("name").build();
+MappingTransform mapping = JsonTransform.mapProperties()
+    .rename("id", "remoteId")
+    .delete("value")
+    .add("constant", Integer.valueOf(42))
+    .reformat("name", new UppercaseConversion())
+    .build();
 ```
 
-### Transform
+# Introduction
 
-A transform applies a transformation to the source document and changes it into the target document.
+Currently there is no easy way of converting Json into some other form of Json in Java. As I am currently working on a project that does lots of Json transformations
+by mapping the Json to Java, the Java to some other Java using mapping code and then map that Java back to Json, I thought it could be a good idea to remove Java from
+the equation and do the transformation in some generic format. This library is an implementation of that idea.  
 
-```java
-new IdentityTransform().apply(source, dest);
-```
+## Features
 
-### Path
+- Property Mappings. (add, delete, rename, reformat, etc)
+- Property Conversions (string, date time, etc)
+- Transforms. (copy, move, map parts or the whole of the document)
+- Select document nodes using JsonPath, prefab selectors or write your own.
+- Describe the position in a document using Path, or a Relative Path.
+- Java Binding.  
+- Json Templates (build a Json document out of other documents using a template structure and selects).
+- Combine multiple Json documents into one.
+- Split and Join documents. 
+- Combine multiple transforms together. 
+- Write your own custom mappings using the Transform or ValuePathTransform interfaces.
+- No runtime dependencies.
 
-A Path describes the location of a node in a document.
+## Getting Started
 
-```java
-Path.fromString("some[2].property");
-```
+Look at the examples above and examine the Unit Tests, they cover the full range of the API.
 
-### Move Transform Select
-
-A Move Transform Select is a combination of a Select, Transform and Move operation. 
-The select selects zero, one or more nodes from the source document, which are transformed 
-and moved to the specified location in the target document.
-
-### Merge
-
-Sometimes you have multiple documents that need to be merged into one. This is what Merge does.
-
-There are 3 different MergeStrategies:
-- Join Merge : the documents are joined.
-- Array Merge: the documents are placed in an array.
-- Overwrite Merge: the documents are merged, any overlapping properties are overwritten.
-
-```java
-MergeFactory.join(Path.root()).merge(someDocument);
-```
-
-### Sequence Mapping
-
-A sequence mapping is a series of Move Transform Selects applied in reverse order.
-
-### Parallel Mapping
-
-A parallel mapping applies different Move Transform Selects to the same source document and merges the results into one document.
-
-### Template
-
-A Template allows you fill a JSON document template with values from another document. Its behavior can be customized using Handlers.
-
-### Document Source
-
-A document source produces a JSON document. There are two basic kinds of Document Sources:
-- Inputs: these document sources provide the JSON documents that are the input of the mapping.  
-- Output: this produces the output of the mapping.
-
-### Mapping Builder
-
-The Mapping Builder combines all of the above concepts to easily create JSON mappings. The result of the Builder is a Document Source
-with which the output document can be produced. The input(s) are given as argument.
-
-The Mapping is built from output to input, so in reverse order.
-
-```
-output &lt;-- ( Move &lt;- Transform &lt;- Select ) &lt;-- input
-``` 
+Then start working with the JsonTransform API facade which exposes most of the functionality of this library.
 
 ## Alternatives
 
 - [JOLT](https://github.com/bazaarvoice/jolt) - JSON to JSON transformation library written in Java where the "specification" for the transform is itself a JSON document.
 - [Silencio](https://github.com/damianszczepanik/silencio) - Silencio is a Java library for transforming and converting JSON, Properties and other file formats.
+
+## License
+
+[Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
+
+# Releases
+
+None Yet!
+ 
+
+
 
  
