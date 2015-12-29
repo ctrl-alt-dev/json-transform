@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import nl.cad.json.transform.mapping.builder.sub.SplitSourceBuilder;
 import nl.cad.json.transform.mapping.map.JoinMapper;
 import nl.cad.json.transform.mapping.map.ParallelMapper;
 import nl.cad.json.transform.mapping.map.SequenceMapper;

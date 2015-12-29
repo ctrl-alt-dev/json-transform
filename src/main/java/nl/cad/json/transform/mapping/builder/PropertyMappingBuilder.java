@@ -28,6 +28,9 @@ import nl.cad.json.transform.transforms.convert.DeleteNodeConversion;
 import nl.cad.json.transform.transforms.convert.OverwriteValueConversion;
 import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
 
+/**
+ * construct property mappings on a single object.
+ */
 public class PropertyMappingBuilder {
 
     public static PropertyMappingBuilder map() {
@@ -71,11 +74,11 @@ public class PropertyMappingBuilder {
 
     /**
      * renames all properties with the given name.
-     * @param toName the name to rename to.
      * @param fromName the name to rename from.
+     * @param toName the name to rename to.
      * @return the mapper.
      */
-    public PropertyMappingBuilder rename(final String toName,final String fromName) {
+    public PropertyMappingBuilder rename(final String fromName, final String toName) {
         return mapping(new RenamePropertyConversion(toName), SelectBuilder.select().property(fromName).build());
     }
 

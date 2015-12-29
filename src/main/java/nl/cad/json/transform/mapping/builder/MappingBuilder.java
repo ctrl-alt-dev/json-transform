@@ -18,6 +18,8 @@ package nl.cad.json.transform.mapping.builder;
 import java.util.List;
 
 import nl.cad.json.transform.mapping.MoveTransformSelect;
+import nl.cad.json.transform.mapping.builder.sub.MultiBuilder;
+import nl.cad.json.transform.mapping.builder.sub.MultiMoveBuilder;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;

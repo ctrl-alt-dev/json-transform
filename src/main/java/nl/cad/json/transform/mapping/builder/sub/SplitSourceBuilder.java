@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping.builder;
+package nl.cad.json.transform.mapping.builder.sub;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,7 +27,7 @@ public class SplitSourceBuilder {
     private DocumentSource source;
     private Map<String, Select> selects;
 
-    protected SplitSourceBuilder(DocumentSource source) {
+    public SplitSourceBuilder(DocumentSource source) {
         this.source = source;
         this.selects = new TreeMap<String, Select>();
     }

@@ -43,7 +43,7 @@ public class PropertyMappingTest {
     public void shouldMapProperties() {
         
         MappingTransform mapping = PropertyMappingBuilder.map()
-                .rename("remoteId", "id")
+                .rename("id", "remoteId")
                 .delete("value")
                 .add("constant", Integer.valueOf(42))
                 .reformat("name", new UppercaseConversion())
@@ -61,7 +61,7 @@ public class PropertyMappingTest {
     public void shouldOverwriteAndRenameSameProperty() {
         MappingTransform mapping = PropertyMappingBuilder.map()
                 .overwrite("one", "two")
-                .rename("two", "one")
+                .rename("one", "two")
                 .build();
 
         Map<String, Object> input = TestUtils.parseJson("/json/one.json");
@@ -93,15 +93,15 @@ public class PropertyMappingTest {
         List<TransformSelect> recursiveMappers = new ArrayList<TransformSelect>();
 
         MappingTransform itemMapping = PropertyMappingBuilder.map()
-                .rename("to", "from")
-                .rename("class", "type")
+                .rename("from", "to")
+                .rename("type", "class")
                 .overwrite("overwrite", "some", "censored")
                 .add("added", Boolean.TRUE)
                 .build();
 
         MappingTransform nrMapping = PropertyMappingBuilder.map()
-                .rename("nr", "number")
-                .rename("class", "type")
+                .rename("number", "nr")
+                .rename("type", "class")
                 .delete("delete")
                 .recurse("children", recursiveMappers)
                 .build();

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.mapping.builder;
+package nl.cad.json.transform.mapping.builder.sub;
 
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.transforms.Transform;
