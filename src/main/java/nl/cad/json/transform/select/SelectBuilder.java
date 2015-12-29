@@ -26,8 +26,6 @@ import nl.cad.json.transform.select.jsonpath.NameType;
 import nl.cad.json.transform.select.jsonpath.SliceJsonPathSelector;
 import nl.cad.json.transform.select.jsonpath.SubselectSelector;
 import nl.cad.json.transform.select.jsonpath.ValueType;
-import nl.cad.json.transform.select.parse.SelectTokenizer;
-import nl.cad.json.transform.select.parse.Token;
 import nl.cad.json.transform.select.selector.AndSelector;
 import nl.cad.json.transform.select.selector.AnyArraySelector;
 import nl.cad.json.transform.select.selector.AnyObjectSelector;
@@ -183,14 +181,6 @@ public class SelectBuilder {
 
     private Selector[] buildComposite() {
         return selectors.toArray(new Selector[selectors.size()]);
-    }
-
-    public static Select fromString(String str) {
-        SelectBuilder builder = select();
-        for (Token t : SelectTokenizer.tokenize(str)) {
-            t.invoke(builder);
-        }
-        return builder.build();
     }
 
     public static Select fromJsonPath(String str) {

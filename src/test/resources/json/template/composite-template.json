@@ -1,6 +1,6 @@
 {
     "results": {
-        "a": "select:property(\"name\")",
+        "a": "select:$..name",
         "b": "path:object"
     },
     "value" : "nasigoreng"

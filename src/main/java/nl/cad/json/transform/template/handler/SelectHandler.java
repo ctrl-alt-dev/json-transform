@@ -46,7 +46,7 @@ public class SelectHandler implements CallbackHandler {
     @Override
     public Object handle(Path path, Object value, Map<String, Object> source) {
         boolean singleSelect = isSingleSelect(value);
-        Select read = SelectBuilder.fromString(String.valueOf(value).substring(singleSelect ? SINGLE_SELECT.length() : SELECT.length()));
+        Select read = SelectBuilder.fromJsonPath(String.valueOf(value).substring(singleSelect ? SINGLE_SELECT.length() : SELECT.length()));
         if (singleSelect) {
             return read.selectOne(source).value();
         } else {

@@ -23,7 +23,6 @@ import nl.cad.json.transform.util.NodeUtils;
 public class BasicJsonPathSelector implements Selector {
 
     private ValueType valueType;
-    private String nameValue;
     private NameType nameType;
     private Object arg;
 

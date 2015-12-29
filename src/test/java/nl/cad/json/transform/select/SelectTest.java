@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import nl.cad.json.transform.path.Path;
-import nl.cad.json.transform.select.SelectBuilder;
-import nl.cad.json.transform.select.SelectionException;
-import nl.cad.json.transform.select.parse.TokenException;
 import nl.cad.json.transform.select.selector.PropertySelector;
 import nl.cad.json.transform.utils.TestUtils;
 
@@ -154,19 +151,6 @@ public class SelectTest {
     @Test
     public void shouldNotEvaluateSelectTooDeep() {
         assertEquals(0, select().property("a").any().any().any().property("object").property("some").build().select(source).size());
-    }
-
-    @Test
-    public void shouldBuildFromString() {
-        assertNotNull(SelectBuilder.fromString("any"));
-        assertNotNull(SelectBuilder.fromString("any()"));
-        assertNotNull(SelectBuilder.fromString("property(\"some\")"));
-        assertNotNull(SelectBuilder.fromString("objectPropertyValue(\"some\",\"some\")"));
-    }
-
-    @Test(expected = TokenException.class)
-    public void shouldFailBuildFromString() {
-        SelectBuilder.fromString("botherhamMetPindakaas(.......");
     }
 
 }
