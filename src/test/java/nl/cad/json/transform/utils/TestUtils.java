@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import nl.cad.json.transform.parse.JsonParser;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,7 +31,7 @@ public class TestUtils {
     @SuppressWarnings("unchecked")
     public static Map<String, Object> parseJson(String resource) {
         try (InputStream in = TestUtils.class.getResourceAsStream(resource)) {
-            return (Map<String, Object>) mapper.readValue(in, Map.class);
+            return (Map<String, Object>) new JsonParser().parse(in);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

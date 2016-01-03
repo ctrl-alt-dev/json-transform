@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import nl.cad.json.transform.template.CallbackTemplate;
 import nl.cad.json.transform.template.handler.CompositeHandler;
 import nl.cad.json.transform.template.handler.PathHandler;
 import nl.cad.json.transform.template.handler.SelectHandler;
@@ -64,7 +63,7 @@ public class TemplateTest {
         Map<String, Object> results = template.fill(source);
 
         assertEquals(
-                "{results={a=[value, a, b]}, value=nasigoreng}",
+                "{results={a=[a, b, value]}, value=nasigoreng}",
                 results.toString());
     }
 
@@ -77,7 +76,7 @@ public class TemplateTest {
         Map<String, Object> results = template.fill(source);
 
         assertEquals(
-                "{results={a=[value, a, b], b={name=value, number=42}}, value=nasigoreng}",
+                "{results={a=[a, b, value], b={name=value, number=42}}, value=nasigoreng}",
                 results.toString());
     }
 
