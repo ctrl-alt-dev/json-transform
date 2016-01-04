@@ -15,6 +15,10 @@
  */
 package nl.cad.json.transform;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+
 import nl.cad.json.transform.mapping.builder.CompositeMappingBuilder;
 import nl.cad.json.transform.mapping.builder.MappingBuilder;
 import nl.cad.json.transform.mapping.builder.PropertyMappingBuilder;
@@ -23,6 +27,7 @@ import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.MultiSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.merge.MergeStrategy;
+import nl.cad.json.transform.parse.JsonParser;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
@@ -131,6 +136,33 @@ public class JsonTransform extends MappingBuilder {
      */
     public static final MultiSource multiSource() {
         return new MultiSource();
+    }
+
+    /**
+     * parses a Json document into a Map/ArrayList/Value structure.
+     * @param document the document.
+     * @return the Map/ArrayList/Value structure.
+     */
+    public static final Object parse(String document) {
+        return new JsonParser().parse(document);
+    }
+
+    /**
+     * reads and parses a Json document into a Map/ArrayList/Value structure.
+     * @param input the reader to read the json from.
+     * @return the Map/ArrayList/Value structure.
+     */
+    public static final Object parse(Reader input) throws IOException {
+        return new JsonParser().parse(input);
+    }
+
+    /**
+     * reads and parses a Json document into a Map/ArrayList/Value structure.
+     * @param input the inputstream to read the json from (using UTF-8 encoding).
+     * @return the Map/ArrayList/Value structure.
+     */
+    public static final Object parse(InputStream input) throws IOException {
+        return new JsonParser().parse(input);
     }
 
 }
