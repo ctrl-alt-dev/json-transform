@@ -29,6 +29,7 @@ import nl.cad.json.transform.mapping.source.ValueSource;
 import nl.cad.json.transform.merge.MergeStrategy;
 import nl.cad.json.transform.parse.JsonParser;
 import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.print.JsonPrinter;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.transforms.Transform;
@@ -163,6 +164,24 @@ public class JsonTransform extends MappingBuilder {
      */
     public static final Object parse(InputStream input) throws IOException {
         return new JsonParser().parse(input);
+    }
+
+    /**
+     * serializes a Map/ArrayList/Value structure to json without formatting.
+     * @param obj the object to serialize.
+     * @return the resulting string.
+     */
+    public static final String print(Object obj) {
+        return new JsonPrinter().toString(obj);
+    }
+
+    /**
+     * serializes a Map/ArrayList/Value structure to with formatting.
+     * @param obj the object to serialize.
+     * @return the resulting string.
+     */
+    public static final String printPretty(Object obj) {
+        return new JsonPrinter().toPrettyString(obj);
     }
 
 }

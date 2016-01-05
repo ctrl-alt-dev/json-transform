@@ -16,7 +16,6 @@
 package nl.cad.json.transform.examples;
 
 import java.io.IOException;
-import java.util.Map;
 
 import nl.cad.json.transform.JsonTransform;
 import nl.cad.json.transform.mapping.source.DocumentSource;
@@ -24,20 +23,12 @@ import nl.cad.json.transform.mapping.source.ValueSource;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MinimalExample {
 
-    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
         //
-        ObjectMapper objectMapper = new ObjectMapper();
-        //
         String document = "{ \"some\":\"value\" }";
-        //
-        // Load JSON Document using Jackson into its basic Java form.
-        //
-        Map<String, Object> input = (Map<String, Object>) objectMapper.readValue(document, Map.class);
         //
         // Build the mapping.
         //
@@ -47,11 +38,13 @@ public class MinimalExample {
         //
         // Pull the output from the input.
         //
-        Object output = mapping.getDocument(new ValueSource(input));
+        Object output = mapping.getDocument(
+                new ValueSource(JsonTransform.parse(document))
+                );
         //
         // Show the output.
         //
-        System.out.println(objectMapper.writeValueAsString(output));
+        System.out.println(JsonTransform.print(output));
         //
         // {"elsewhere":{"some":"value"}}
         //

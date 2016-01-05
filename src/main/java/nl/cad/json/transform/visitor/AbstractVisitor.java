@@ -91,12 +91,27 @@ public class AbstractVisitor {
         if (v.onBeginArray(source, target)) {
             List<Object> array = NodeUtils.toArray(source.value());
             for (Object value : array) {
-                ValuePath nextSource = source.enter(source.path().enter(array.indexOf(value)), value);
-                ValuePath nextTarget = target.enter(target.path().enter(array.indexOf(value)), null);
+                ValuePath nextSource = source.enter(source.path().enter(indexOf(array, value)), value);
+                ValuePath nextTarget = target.enter(target.path().enter(indexOf(array, value)), null);
                 doVisit(v, nextSource, nextTarget);
             }
         }
         v.onEndArray(source, target);
+    }
+
+    /**
+     * we don't want the equals indexOf but the index of the same reference.
+     * @param array the array to scan.
+     * @param reference the reference to look for.
+     * @return the index or -1 if not found
+     */
+    private int indexOf(List<Object> array, Object reference) {
+        for (int t = 0; t < array.size(); t++) {
+            if (array.get(t) == reference) {
+                return t;
+            }
+        }
+        return -1;
     }
 
     private void visitObject(ValuePathVisitor v, ValuePath source, ValuePath target) {
