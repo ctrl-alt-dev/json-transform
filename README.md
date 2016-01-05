@@ -8,27 +8,23 @@ A Java centric library to do transforms and mappings on JSON documents.
 
 ```java
 //
-ObjectMapper objectMapper = new ObjectMapper();
-//
 String document = "{ \"some\":\"value\" }";
-//
-// Load JSON Document using Jackson into its basic Java form.
-//
-Map<String, Object> input = (Map<String, Object>) objectMapper.readValue(document, Map.class);
 //
 // Build the mapping.
 //
 DocumentSource mapping = JsonTransform.sequence(
-      JsonTransform.move(JsonTransform.path("elsewhere"))
-      ).build();
+    JsonTransform.move(JsonTransform.path("elsewhere"))
+    ).build();
 //
-// Apply the mapping: pull the output from the input.
+// Pull the output from the input.
 //
-Object output = mapping.getDocument(new ValueSource(input));
+Object output = mapping.getDocument(
+    new ValueSource(JsonTransform.parse(document))
+    );
 //
 // Show the output.
 //
-System.out.println(objectMapper.writeValueAsString(output));
+System.out.println(JsonTransform.print(output));
 //
 // {"elsewhere":{"some":"value"}}
 //
@@ -42,6 +38,8 @@ MappingTransform mapping = JsonTransform.mapProperties()
     .delete("value")
     .add("constant", Integer.valueOf(42))
     .reformat("name", new UppercaseConversion())
+    .move("move", JsonTransform.path("moved.somewhere"))
+    .rename("bad", "good")
     .build();
 ```
 
@@ -64,6 +62,7 @@ the equation and do the transformation in some generic format. This library is a
 - Split and Join documents. 
 - Combine multiple transforms together. 
 - Write your own custom mappings using the Transform or ValuePathTransform interfaces.
+- Built in parser and printer.
 - No runtime dependencies.
 
 ## Getting Started
