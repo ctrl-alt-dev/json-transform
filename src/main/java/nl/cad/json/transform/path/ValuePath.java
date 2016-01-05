@@ -110,4 +110,11 @@ public class ValuePath {
         return parent.toString() + "/[" + path.getTop() + "," + value + "]";
     }
 
+    public Object getRoot() {
+        if (this.isRoot()) {
+            return value;
+        }
+        return parent().getRoot();
+    }
+
 }

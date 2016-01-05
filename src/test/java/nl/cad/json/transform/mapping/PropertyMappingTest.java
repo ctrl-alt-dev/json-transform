@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import nl.cad.json.transform.JsonTransform;
 import nl.cad.json.transform.mapping.builder.PropertyMappingBuilder;
+import nl.cad.json.transform.path.relative.RelativePathBuilder;
 import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.convert.string.UppercaseConversion;
 import nl.cad.json.transform.transforms.convert.time.FormatTimestampToLocalDateTimeConversion;
@@ -120,5 +122,46 @@ public class PropertyMappingTest {
         assertEquals(
                 "{list=[{added=true, class=Item, overwrite=censored, to=pindakaas}, {children=[{children=[{added=true, class=Item, to=wodkasju}], class=Number}], class=Number, nr=758}]}",
                 String.valueOf(output));
+    }
+
+    @Test
+    public void shouldMapMoveRelative() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .overwrite("one", "two")
+                .move("one", RelativePathBuilder.relativePath().parent().property("spirited").property("away").build())
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/one.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{spirited={away=two}}", String.valueOf(output));
+    }
+
+    @Test
+    public void shouldMapMoveRelativeToo() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .move("one", RelativePathBuilder.relativePath().parent().property("spirited").index(2).build())
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/one.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{spirited=[null, null, 1]}", String.valueOf(output));
+    }
+
+    @Test
+    public void shouldMapMoveAbsolute() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .overwrite("one", "two")
+                .move("one", JsonTransform.path("moved.somewhere"))
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/one.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{moved={somewhere=two}}", String.valueOf(output));
     }
 }

@@ -19,13 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.cad.json.transform.mapping.TransformSelect;
+import nl.cad.json.transform.path.Path;
+import nl.cad.json.transform.path.relative.RelativePath;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.ValuePathTransform;
+import nl.cad.json.transform.transforms.convert.AbsoluteMovePropertyConversion;
 import nl.cad.json.transform.transforms.convert.AddPropertyConversion;
 import nl.cad.json.transform.transforms.convert.DeleteNodeConversion;
 import nl.cad.json.transform.transforms.convert.OverwriteValueConversion;
+import nl.cad.json.transform.transforms.convert.RelativeMovePropertyConversion;
 import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
 
 /**
@@ -80,6 +84,14 @@ public class PropertyMappingBuilder {
      */
     public PropertyMappingBuilder rename(final String fromName, final String toName) {
         return mapping(new RenamePropertyConversion(toName), SelectBuilder.select().property(fromName).build());
+    }
+
+    public PropertyMappingBuilder move(final String property, RelativePath path) {
+        return mapping(new RelativeMovePropertyConversion(path), SelectBuilder.select().property(property).build());
+    }
+
+    public PropertyMappingBuilder move(final String property, Path path) {
+        return mapping(new AbsoluteMovePropertyConversion(path), SelectBuilder.select().property(property).build());
     }
 
     public PropertyMappingBuilder overwrite(final String property, final String targetValue) {
