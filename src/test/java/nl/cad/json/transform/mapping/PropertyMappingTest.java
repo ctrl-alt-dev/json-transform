@@ -164,4 +164,30 @@ public class PropertyMappingTest {
 
         assertEquals("{moved={somewhere=two}}", String.valueOf(output));
     }
+
+    @Test
+    public void shouldFlattenProperty() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .flatten("components")
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/composite.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{a=b, b=c, c=d, d=e, f=g, g=h}", String.valueOf(output));
+    }
+
+    @Test
+    public void shouldSkipProperty() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .skip("components")
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/composite.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{}", String.valueOf(output));
+    }
 }

@@ -28,9 +28,11 @@ import nl.cad.json.transform.transforms.ValuePathTransform;
 import nl.cad.json.transform.transforms.convert.AbsoluteMovePropertyConversion;
 import nl.cad.json.transform.transforms.convert.AddPropertyConversion;
 import nl.cad.json.transform.transforms.convert.DeleteNodeConversion;
+import nl.cad.json.transform.transforms.convert.FlattenPropertyConversion;
 import nl.cad.json.transform.transforms.convert.OverwriteValueConversion;
 import nl.cad.json.transform.transforms.convert.RelativeMovePropertyConversion;
 import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
+import nl.cad.json.transform.transforms.convert.SkipConversion;
 
 /**
  * construct property mappings on a single object.
@@ -108,6 +110,28 @@ public class PropertyMappingBuilder {
 
     public PropertyMappingBuilder recurse(final String property, MappingTransform mappers) {
         return mapping(mappers, SelectBuilder.select().property(property).build());
+    }
+
+    /**
+     * skips the specified properties, not copying them to the output and also not visiting its child properties.
+     * @param properties the properties.
+     * @return the mapper.
+     */
+    public PropertyMappingBuilder skip(final String... properties) {
+        for (String pr : properties) {
+            mapping(new SkipConversion(), SelectBuilder.select().property(pr).build());
+        }
+        return this;
+    }
+
+    /**
+     * flattens the specified property into the parent object.
+     * All named child properties that hold a value will be added to the parent object.
+     * @param property the property to flatten.
+     * @return the builder.
+     */
+    public PropertyMappingBuilder flatten(final String property) {
+        return mapping(new FlattenPropertyConversion(), SelectBuilder.select().property(property).build());
     }
 
     public PropertyMappingBuilder delete(final String property) {
