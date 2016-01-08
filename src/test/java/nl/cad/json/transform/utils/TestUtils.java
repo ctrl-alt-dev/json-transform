@@ -21,26 +21,13 @@ import java.util.Map;
 
 import nl.cad.json.transform.JsonTransform;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class TestUtils {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> parseJson(String resource) {
         try (InputStream in = TestUtils.class.getResourceAsStream(resource)) {
             return (Map<String, Object>) JsonTransform.parse(in);
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static String renderJson(Object src) {
-        try {
-            return mapper.writeValueAsString(src);
-        } catch (JsonProcessingException ex) {
             throw new RuntimeException(ex);
         }
     }

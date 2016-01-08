@@ -31,6 +31,7 @@ import static nl.cad.json.transform.mapping.builder.MappingBuilder.transform;
 
 import java.util.Map;
 
+import nl.cad.json.transform.JsonTransform;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.MultiSource;
 import nl.cad.json.transform.merge.MergeFactory;
@@ -92,7 +93,7 @@ public class UseCaseTest {
 
         Object results = mapping.getDocument(source);
         
-        System.out.println(TestUtils.renderJson(results));
+        System.out.println(JsonTransform.print(results));
     }
 
 }

@@ -21,12 +21,9 @@ import nl.cad.json.transform.JsonTransform;
 import nl.cad.json.transform.mapping.source.DocumentSource;
 import nl.cad.json.transform.mapping.source.ValueSource;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 public class MinimalExample {
 
-    public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+    public static void main(String[] args) throws IOException {
         //
         String document = "{ \"some\":\"value\" }";
         //

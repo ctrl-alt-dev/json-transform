@@ -3,7 +3,7 @@
 
     <groupId>nl.cad.jsontransform</groupId>
     <artifactId>json-transform</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Json Transform</name>
     <description>A Java centric library to transform and map JSON documents</description>
@@ -37,19 +37,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-            <scope>test</scope>
-        </dependency>
     
         <dependency>
             <groupId>junit</groupId>
