@@ -90,6 +90,7 @@ public class JsonTransform extends MappingBuilder {
      * construct a mapper that will apply multiple transform to same input,
      * merging the results using the provided merge strategy.
      * @param merge the merge strategy to use.
+     * @param transforms the transforms to execute in parallel.
      * @return the builder.
      */
     public static final CompositeMappingBuilder parallel(MergeStrategy merge, Transform... transforms) {
@@ -98,6 +99,7 @@ public class JsonTransform extends MappingBuilder {
 
     /**
      * constructs a mapper that will apply transform sequentially to each other.
+     * @param transforms the transforms to execute in sequence.
      * @return the builder.
      */
     public static final CompositeMappingBuilder sequence(Transform... transforms) {
@@ -152,6 +154,7 @@ public class JsonTransform extends MappingBuilder {
      * reads and parses a Json document into a Map/ArrayList/Value structure.
      * @param input the reader to read the json from.
      * @return the Map/ArrayList/Value structure.
+     * @throws IOException when reading fails.
      */
     public static final Object parse(Reader input) throws IOException {
         return new JsonParser().parse(input);
@@ -161,6 +164,7 @@ public class JsonTransform extends MappingBuilder {
      * reads and parses a Json document into a Map/ArrayList/Value structure.
      * @param input the inputstream to read the json from (using UTF-8 encoding).
      * @return the Map/ArrayList/Value structure.
+     * @throws IOException when reading fails.
      */
     public static final Object parse(InputStream input) throws IOException {
         return new JsonParser().parse(input);

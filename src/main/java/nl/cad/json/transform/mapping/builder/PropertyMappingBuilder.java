@@ -66,7 +66,7 @@ public class PropertyMappingBuilder {
     /**
      * applies a transform against an object of a specific type.
      * @param transform the transform.
-     * @param typeProperty the property holding the type.
+     * @param property the property holding the type.
      * @param value the type value.
      * @return the mapper.
      */

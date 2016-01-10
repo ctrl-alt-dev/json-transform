@@ -157,6 +157,7 @@ public class MappingBuilder {
 
     /**
      * applies a java mapping to the input document and moves the result to the root.
+     * @param <A> the type to return.
      * @param type the Java input type.
      * @param function the function to execute.
      * @return the builder.
@@ -168,6 +169,7 @@ public class MappingBuilder {
 
     /**
      * applies a java mapping to the input document and moves the result to the given path.
+     * @param <A> the type to return.
      * @param path the path.
      * @param type the Java input type.
      * @param function the function to execute.
@@ -179,6 +181,7 @@ public class MappingBuilder {
 
     /**
      * applies a java mapping to the selection of the input document and moves the result to the root.
+     * @param <A> the type to return.
      * @param type the Java input type.
      * @param function the function to execute.
      * @param select the selection.
@@ -190,6 +193,7 @@ public class MappingBuilder {
 
     /**
      * applies a java mapping to the selection of the input document and moves the result to the given path.
+     * @param <A> the type to return.
      * @param path the path.
      * @param type the Java input type.
      * @param function the function to execute.

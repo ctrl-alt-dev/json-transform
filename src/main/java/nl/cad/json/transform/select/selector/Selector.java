@@ -21,7 +21,7 @@ public interface Selector {
 
     /**
      * matches the given path and value against this selector.
-     * @param valuePath the path and value.
+     * @param path the path and value.
      * @return true if the path matches.
      */
     boolean matches(ValuePath path);

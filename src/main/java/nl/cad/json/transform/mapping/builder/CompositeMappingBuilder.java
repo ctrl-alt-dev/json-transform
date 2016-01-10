@@ -46,6 +46,7 @@ public class CompositeMappingBuilder {
      * construct a mapper that will apply multiple transform to same input,
      * merging the results using the provided merge strategy.
      * @param merge the merge strategy to use.
+     * @param transforms the transforms to execute in parallel.
      * @return the builder.
      */
     public static CompositeMappingBuilder parallel(MergeStrategy merge, Transform... transforms) {
@@ -54,6 +55,7 @@ public class CompositeMappingBuilder {
 
     /**
      * constructs a mapper that will apply transform sequentially to each other.
+     * @param transforms the transforms to execute in sequence.
      * @return the builder.
      */
     public static CompositeMappingBuilder sequence(Transform... transforms) {

@@ -41,14 +41,12 @@ public interface MultiMoveBuilder {
 
     /**
      * adds an identity transform to the builder.
-     * @param transform the transform.
      * @return the select builder.
      */
     MultiSelectBuilder identity();
 
     /**
      * adds a no-operation transform to the builder.
-     * @param transform the transform.
      * @return the select builder.
      */
     MultiSelectBuilder nop();

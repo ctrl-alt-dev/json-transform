@@ -22,6 +22,7 @@ public interface DocumentToJavaMapper {
 
     /**
      * transforms the given document into a Java Object.
+     * @param <A> the return type.
      * @param type the type to create.
      * @param document the document to create from.
      * @return an instance of the object.
