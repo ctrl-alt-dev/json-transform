@@ -190,4 +190,32 @@ public class PropertyMappingTest {
 
         assertEquals("{}", String.valueOf(output));
     }
+
+    @Test
+    public void shouldCompute() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .compute("components", prop -> ((List<?>) prop.get()).size())
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/composite.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{components=2}", String.valueOf(output));
+        
+    }
+
+    @Test
+    public void shouldComputeAndAdd() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .computeAndAdd("arrays", "size", prop -> ((List<?>) prop.get()).size())
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/arrays.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{arrays=[1, 2, [3, 4], 5, 6, [7, 8]], size=6}", String.valueOf(output));
+
+    }
 }

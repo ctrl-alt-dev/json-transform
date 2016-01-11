@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.structural;
 
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;

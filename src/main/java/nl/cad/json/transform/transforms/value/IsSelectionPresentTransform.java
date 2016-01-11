@@ -13,22 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.value;
 
-import nl.cad.json.transform.path.ValuePath;
-import nl.cad.json.transform.transforms.ValuePathTransform;
+import nl.cad.json.transform.transforms.Transform;
 
-public class OverwriteValueConversion implements ValuePathTransform {
-
-    private Object value;
-
-    public OverwriteValueConversion(Object value) {
-        this.value = value;
-    }
+/**
+ * returns a boolean true if the selection has at least one result.
+ */
+public class IsSelectionPresentTransform implements Transform {
 
     @Override
-    public void apply(ValuePath source, ValuePath target) {
-        target.set(value);
+    public Object apply(Object source) {
+        return Boolean.valueOf(source != null);
     }
-
 }

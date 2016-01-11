@@ -32,17 +32,30 @@ import nl.cad.json.transform.transforms.TemplateAdapter;
 import nl.cad.json.transform.transforms.Transform;
 import nl.cad.json.transform.transforms.ValuePathTransform;
 import nl.cad.json.transform.transforms.ValuePathTransformAdapter;
-import nl.cad.json.transform.transforms.convert.IsSelectionPresentTransform;
+import nl.cad.json.transform.transforms.value.IsSelectionPresentTransform;
 
 /**
  * constructs mappings consisting of a move, transform and select.
  */
 public class MappingBuilder {
-    
+
+    /**
+     * starts building a mapping that takes multiple selects and multiple output paths.
+     * @return the multibuilder.
+     */
     public static MultiMoveBuilder manyToMany() {
         return new MultiBuilder();
     }
 
+    /**
+     * takes multiple selections from the input, applies the transform and moves the result
+     * to the specified paths in the output. It is probably easier to use manyToMany() than
+     * this using this method directly.
+     * @param moves the paths to move the result to.
+     * @param transform the transform to apply.
+     * @param selects the selects to use to find nodes.
+     * @return the transform.
+     */
     public static Transform transform(List<Path> moves, Transform transform, List<Select> selects) {
         return new MoveTransformSelect(moves, transform, selects);
     }
@@ -214,14 +227,34 @@ public class MappingBuilder {
         return transform(path, new IsSelectionPresentTransform(), select);
     }
 
+    /**
+     * applies a mapping transform to the selected nodes and moves the result to the given path.
+     * @param path the path.
+     * @param mapping the mapping.
+     * @param select the selection.
+     * @return the builder.
+     */
     public static Transform map(Path path, MappingTransform mapping, Select select) {
         return transform(path, mapping, select);
     }
 
+    /**
+     * applies a value path transform to the selected nodes and moves the result to the given path.
+     * @param move the path to move to.
+     * @param transform the value path transform.
+     * @param select the selection.
+     * @return the builder.
+     */
     public static Transform map(Path move, ValuePathTransform transform, Select select) {
         return transform(move, new ValuePathTransformAdapter(transform), select);
     }
 
+    /**
+     * applies a value path transform to the selected nodes and moves the result to root.
+     * @param transform the value path transform.
+     * @param select the selection.
+     * @return the builder.
+     */
     public static Transform map(ValuePathTransform transform, Select select) {
         return transform(Path.root(), new ValuePathTransformAdapter(transform), select);
     }

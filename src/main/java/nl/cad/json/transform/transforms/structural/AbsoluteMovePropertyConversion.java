@@ -13,19 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.structural;
 
+import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;
+import nl.cad.json.transform.util.NodeUtils;
 
-/**
- * Does nothing, effectively skipping the property and
- * also not visiting its children.
- */
-public class SkipConversion implements ValuePathTransform {
+public class AbsoluteMovePropertyConversion implements ValuePathTransform {
+
+    private Path absolutePath;
+
+    public AbsoluteMovePropertyConversion(Path absolutePath) {
+        this.absolutePath = absolutePath;
+    }
 
     @Override
     public void apply(ValuePath source, ValuePath target) {
+        Object value = target.get();
+        if (value == null) {
+            value = source.get();
+        } else {
+            NodeUtils.toObject(target.parent().get()).remove(target.path().getTop());
+        }
+        absolutePath.create(target.getRoot());
+        absolutePath.set(target.getRoot(), value);
     }
 
 }

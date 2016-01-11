@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.value;
 
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;
-import nl.cad.json.transform.util.NodeUtils;
 
-public class AddPropertyConversion implements ValuePathTransform {
+public class OverwriteValueConversion implements ValuePathTransform {
 
-    private String property;
     private Object value;
 
-    public AddPropertyConversion(String property, Object value) {
-        this.property = property;
+    public OverwriteValueConversion(Object value) {
         this.value = value;
     }
 
     @Override
     public void apply(ValuePath source, ValuePath target) {
-        NodeUtils.toObject(target.get()).put(property, value);
+        target.set(value);
     }
 
 }

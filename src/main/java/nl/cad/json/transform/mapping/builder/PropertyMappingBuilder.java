@@ -21,18 +21,21 @@ import java.util.List;
 import nl.cad.json.transform.mapping.TransformSelect;
 import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.relative.RelativePath;
+import nl.cad.json.transform.path.relative.RelativePathBuilder;
 import nl.cad.json.transform.select.Select;
 import nl.cad.json.transform.select.SelectBuilder;
 import nl.cad.json.transform.transforms.MappingTransform;
 import nl.cad.json.transform.transforms.ValuePathTransform;
-import nl.cad.json.transform.transforms.convert.AbsoluteMovePropertyConversion;
-import nl.cad.json.transform.transforms.convert.AddPropertyConversion;
-import nl.cad.json.transform.transforms.convert.DeleteNodeConversion;
-import nl.cad.json.transform.transforms.convert.FlattenPropertyConversion;
-import nl.cad.json.transform.transforms.convert.OverwriteValueConversion;
-import nl.cad.json.transform.transforms.convert.RelativeMovePropertyConversion;
-import nl.cad.json.transform.transforms.convert.RenamePropertyConversion;
-import nl.cad.json.transform.transforms.convert.SkipConversion;
+import nl.cad.json.transform.transforms.structural.AbsoluteMovePropertyConversion;
+import nl.cad.json.transform.transforms.structural.AddPropertyConversion;
+import nl.cad.json.transform.transforms.structural.DeleteNodeConversion;
+import nl.cad.json.transform.transforms.structural.FlattenPropertyConversion;
+import nl.cad.json.transform.transforms.structural.RelativeMovePropertyConversion;
+import nl.cad.json.transform.transforms.structural.SkipConversion;
+import nl.cad.json.transform.transforms.value.ComputeAndAddValueTransform;
+import nl.cad.json.transform.transforms.value.ComputeValueTransform;
+import nl.cad.json.transform.transforms.value.ComputeValueTransform.Computation;
+import nl.cad.json.transform.transforms.value.OverwriteValueConversion;
 
 /**
  * construct property mappings on a single object.
@@ -53,11 +56,23 @@ public class PropertyMappingBuilder {
         return new MappingTransform(new ArrayList<TransformSelect>(transformSelects));
     }
 
+    /**
+     * adds a mapping.
+     * @param transform the transform.
+     * @param select the selection.
+     * @return the builder.
+     */
     public PropertyMappingBuilder mapping(ValuePathTransform transform, Select select) {
         transformSelects.add(new TransformSelect(transform, select));
         return this;
     }
 
+    /**
+     * adds a mapping that will be executed after all the other mappings.
+     * @param transform the transform.
+     * @param select the select.
+     * @return the builder.
+     */
     public PropertyMappingBuilder postMapping(ValuePathTransform transform, Select select) {
         transformSelects.add(new TransformSelect(transform, select, true));
         return this;
@@ -68,7 +83,7 @@ public class PropertyMappingBuilder {
      * @param transform the transform.
      * @param property the property holding the type.
      * @param value the type value.
-     * @return the mapper.
+     * @return the builder.
      */
     public PropertyMappingBuilder objectMapping(ValuePathTransform transform, String property, String value) {
         return mapping(transform, SelectBuilder.select().objectPropertyValue(property, value).build());
@@ -82,34 +97,73 @@ public class PropertyMappingBuilder {
      * renames all properties with the given name.
      * @param fromName the name to rename from.
      * @param toName the name to rename to.
-     * @return the mapper.
+     * @return the builder.
      */
     public PropertyMappingBuilder rename(final String fromName, final String toName) {
-        return mapping(new RenamePropertyConversion(toName), SelectBuilder.select().property(fromName).build());
+        return move(fromName, RelativePathBuilder.relativePath().parent().property(toName).build());
     }
 
+    /**
+     * moves the property relative from its current position in the document.
+     * @param property the property to move.
+     * @param path the relative path.
+     * @return the builder.
+     */
     public PropertyMappingBuilder move(final String property, RelativePath path) {
-        return mapping(new RelativeMovePropertyConversion(path), SelectBuilder.select().property(property).build());
+        return mapping(new RelativeMovePropertyConversion(path), selectProperty(property));
     }
 
+    /**
+     * moves the property to an absolute position in the document.
+     * @param property the property to move.
+     * @param path the absolute path.
+     * @return the builder.
+     */
     public PropertyMappingBuilder move(final String property, Path path) {
-        return mapping(new AbsoluteMovePropertyConversion(path), SelectBuilder.select().property(property).build());
+        return mapping(new AbsoluteMovePropertyConversion(path), selectProperty(property));
     }
 
+    /**
+     * overwrites the property with a fixed value.
+     * @param property the property.
+     * @param targetValue the value.
+     * @return the builder.
+     */
     public PropertyMappingBuilder overwrite(final String property, final String targetValue) {
-        return mapping(new OverwriteValueConversion(targetValue), SelectBuilder.select().property(property).build());
+        return mapping(new OverwriteValueConversion(targetValue), selectProperty(property));
     }
 
+    /**
+     * overwrites the property with the given value with another value.
+     * @param property the property.
+     * @param value the property value to overwrite.
+     * @param targetValue the new value.
+     * @return the builder.
+     */
     public PropertyMappingBuilder overwrite(final String property, String value, final String targetValue) {
         return mapping(new OverwriteValueConversion(targetValue), SelectBuilder.select().propertyValue(property, value).build());
     }
 
+    /**
+     * applies mapping to the property.
+     * Use this form when you want to re-use the same mapping as you're currently building by
+     * giving it an empty List and populating the list after construction of this mapping.
+     * @param property the property.
+     * @param mappers the mappers to apply
+     * @return the builder.
+     */
     public PropertyMappingBuilder recurse(final String property, final List<TransformSelect> mappers) {
-        return mapping(new MappingTransform(mappers), SelectBuilder.select().property(property).build());
+        return mapping(new MappingTransform(mappers), selectProperty(property));
     }
 
+    /**
+     * applies mapping to the property.
+     * @param property the property.
+     * @param mappers the mappers to apply
+     * @return the builder.
+     */
     public PropertyMappingBuilder recurse(final String property, MappingTransform mappers) {
-        return mapping(mappers, SelectBuilder.select().property(property).build());
+        return mapping(mappers, selectProperty(property));
     }
 
     /**
@@ -119,7 +173,7 @@ public class PropertyMappingBuilder {
      */
     public PropertyMappingBuilder skip(final String... properties) {
         for (String pr : properties) {
-            mapping(new SkipConversion(), SelectBuilder.select().property(pr).build());
+            mapping(new SkipConversion(), selectProperty(pr));
         }
         return this;
     }
@@ -131,20 +185,55 @@ public class PropertyMappingBuilder {
      * @return the builder.
      */
     public PropertyMappingBuilder flatten(final String property) {
-        return mapping(new FlattenPropertyConversion(), SelectBuilder.select().property(property).build());
+        return mapping(new FlattenPropertyConversion(), selectProperty(property));
     }
 
+    /**
+     * deletes a node from the target document.
+     * @param property the property.
+     * @return the builder.
+     */
     public PropertyMappingBuilder delete(final String property) {
-        return mapping(new DeleteNodeConversion(), SelectBuilder.select().property(property).build());
+        return mapping(new DeleteNodeConversion(), selectProperty(property));
     }
 
     public PropertyMappingBuilder reformat(final String property, ValuePathTransform conversion) {
-        return mapping(conversion, SelectBuilder.select().property(property).build());
+        return mapping(conversion, selectProperty(property));
     }
 
+    /**
+     * computes the new value of the property.
+     * @param property the property.
+     * @param computation the computation.
+     * @return the builder.
+     */
+    public PropertyMappingBuilder compute(final String property, Computation computation) {
+        return mapping(new ComputeValueTransform(computation), selectProperty(property));
+    }
+
+    /**
+     * computes a new value based on the selected property and adds a new property holding that value.
+     * @param selectProperty the property to select.
+     * @param addProperty the property to add.
+     * @param computation the computation.
+     * @return the builder.
+     */
+    public PropertyMappingBuilder computeAndAdd(final String selectProperty, final String addProperty, Computation computation) {
+        return mapping(new ComputeAndAddValueTransform(addProperty, computation), selectProperty(selectProperty));
+    }
+
+    /**
+     * adds a single property with the given value.
+     * @param property the property to add.
+     * @param value its value.
+     * @return the builder.
+     */
     public PropertyMappingBuilder add(final String property, final Object value) {
         return postMapping(new AddPropertyConversion(property, value), SelectBuilder.selectRoot());
     }
 
+    private Select selectProperty(final String property) {
+        return SelectBuilder.select().property(property).build();
+    }
 
 }

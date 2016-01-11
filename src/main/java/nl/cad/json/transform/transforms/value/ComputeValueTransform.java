@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.value;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;
-import nl.cad.json.transform.util.NodeUtils;
 
-public class AbsoluteMovePropertyConversion implements ValuePathTransform {
+public class ComputeValueTransform implements ValuePathTransform {
 
-    private Path absolutePath;
+    @FunctionalInterface
+    public static interface Computation {
 
-    public AbsoluteMovePropertyConversion(Path absolutePath) {
-        this.absolutePath = absolutePath;
+        Object compute(ValuePath source);
+
+    }
+
+    private Computation computation;
+
+    public ComputeValueTransform(Computation computation) {
+        this.computation = computation;
     }
 
     @Override
     public void apply(ValuePath source, ValuePath target) {
-        Object value = target.get();
-        if (value == null) {
-            value = source.get();
-        } else {
-            NodeUtils.toObject(target.parent().get()).remove(target.path().getTop());
-        }
-        absolutePath.create(target.getRoot());
-        absolutePath.set(target.getRoot(), value);
+        target.set(computation.compute(source));
     }
 
 }

@@ -13,33 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
+package nl.cad.json.transform.transforms.value;
 
-import nl.cad.json.transform.path.Path;
 import nl.cad.json.transform.path.ValuePath;
-import nl.cad.json.transform.path.relative.RelativePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;
-import nl.cad.json.transform.util.NodeUtils;
+import nl.cad.json.transform.transforms.value.ComputeValueTransform.Computation;
 
-public class RelativeMovePropertyConversion implements ValuePathTransform {
+public class ComputeAndAddValueTransform implements ValuePathTransform {
 
-    private RelativePath relativePath;
+    private Computation computation;
+    private String property;
 
-    public RelativeMovePropertyConversion(RelativePath relativePath) {
-        this.relativePath = relativePath;
+    public ComputeAndAddValueTransform(String property, Computation computation) {
+        this.property = property;
+        this.computation = computation;
     }
 
     @Override
     public void apply(ValuePath source, ValuePath target) {
-        Path targetPath = relativePath.apply(target.path());
-        Object value = target.get();
-        if (value == null) {
-            value = source.get();
-        } else {
-            NodeUtils.toObject(target.parent().get()).remove(target.path().getTop());
-        }
-        targetPath.create(target.getRoot());
-        targetPath.set(target.getRoot(), value);
+        target.set(source.get()); // copy original value.
+        ValuePath enter = target.parent().enter(target.path().parent().enter(property), null);
+        enter.set(computation.compute(source));
     }
 
 }

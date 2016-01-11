@@ -13,35 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.cad.json.transform.transforms.convert;
-
-import java.util.Map;
+package nl.cad.json.transform.transforms.structural;
 
 import nl.cad.json.transform.path.ValuePath;
 import nl.cad.json.transform.transforms.ValuePathTransform;
 import nl.cad.json.transform.util.NodeUtils;
-import nl.cad.json.transform.visitor.AbstractVisitor;
 
-/**
- * Flattens the selected property into its parent object node,
- * so that all its child properties become part of the parent object.
- */
-public class FlattenPropertyConversion extends AbstractVisitor implements ValuePathTransform {
+public class AddPropertyConversion implements ValuePathTransform {
 
-    public FlattenPropertyConversion() {
+    private String property;
+    private Object value;
+
+    public AddPropertyConversion(String property, Object value) {
+        this.property = property;
+        this.value = value;
     }
 
     @Override
     public void apply(ValuePath source, ValuePath target) {
-        Map<String, Object> object = NodeUtils.toObject(target.parent().get());
-        visit(source.get(), new ValuePathVisitorImpl() {
-            @Override
-            public void onValue(ValuePath source, ValuePath target) {
-                if (source.path().isProperty()) {
-                    object.put(String.valueOf(source.path().getTop()), source.get());
-                }
-            }
-        });
+        NodeUtils.toObject(target.get()).put(property, value);
     }
 
 }
