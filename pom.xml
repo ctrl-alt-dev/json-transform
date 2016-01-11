@@ -3,7 +3,7 @@
 
     <groupId>nl.ctrlaltdev.jsontransform</groupId>
     <artifactId>json-transform</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
     <name>JSON Transform</name>
     <description>A Java centric library to transform and map JSON documents</description>
