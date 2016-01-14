@@ -43,6 +43,18 @@ MappingTransform mapping = JsonTransform.mapProperties()
     .build();
 ```
 
+# Maven
+
+To use JSON-Transform in your project, add the following Maven dependency:
+
+```xml
+<dependency>
+  <groupId>nl.ctrlaltdev.jsontransform</groupId>
+  <artifactId>json-transform</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
 # Introduction
 
 Currently there is no easy way of converting Json into some other form of Json in Java. As I am currently working on a project that does lots of Json transformations
@@ -82,8 +94,10 @@ Then start working with the JsonTransform API facade which exposes most of the f
 
 # Releases
 
-None Yet!
- 
+## 0.1.0 / 14 January 2016
+
+First Release!
+
 
 
 
