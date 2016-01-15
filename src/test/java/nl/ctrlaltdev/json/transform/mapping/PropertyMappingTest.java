@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import nl.ctrlaltdev.json.transform.JsonTransform;
-import nl.ctrlaltdev.json.transform.mapping.TransformSelect;
 import nl.ctrlaltdev.json.transform.mapping.builder.PropertyMappingBuilder;
 import nl.ctrlaltdev.json.transform.path.relative.RelativePathBuilder;
 import nl.ctrlaltdev.json.transform.transforms.MappingTransform;
@@ -177,6 +176,19 @@ public class PropertyMappingTest {
         Object output = mapping.apply(input);
 
         assertEquals("{a=b, b=c, c=d, d=e, f=g, g=h}", String.valueOf(output));
+    }
+
+    @Test
+    public void shouldFlattenPropertyWithExclude() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .flatten("components", "components")
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/composite.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{a=b, g=h}", String.valueOf(output));
     }
 
     @Test

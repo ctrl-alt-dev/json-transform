@@ -34,8 +34,8 @@ import nl.ctrlaltdev.json.transform.transforms.structural.RelativeMovePropertyCo
 import nl.ctrlaltdev.json.transform.transforms.structural.SkipConversion;
 import nl.ctrlaltdev.json.transform.transforms.value.ComputeAndAddValueTransform;
 import nl.ctrlaltdev.json.transform.transforms.value.ComputeValueTransform;
-import nl.ctrlaltdev.json.transform.transforms.value.OverwriteValueConversion;
 import nl.ctrlaltdev.json.transform.transforms.value.ComputeValueTransform.Computation;
+import nl.ctrlaltdev.json.transform.transforms.value.OverwriteValueConversion;
 
 /**
  * construct property mappings on a single object.
@@ -182,10 +182,11 @@ public class PropertyMappingBuilder {
      * flattens the specified property into the parent object.
      * All named child properties that hold a value will be added to the parent object.
      * @param property the property to flatten.
+     * @param excludes the sub-properties to exclude.
      * @return the builder.
      */
-    public PropertyMappingBuilder flatten(final String property) {
-        return mapping(new FlattenPropertyConversion(), selectProperty(property));
+    public PropertyMappingBuilder flatten(final String property, String... excludes) {
+        return mapping(new FlattenPropertyConversion(excludes), selectProperty(property));
     }
 
     /**

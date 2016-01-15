@@ -28,7 +28,14 @@ import nl.ctrlaltdev.json.transform.visitor.AbstractVisitor;
  */
 public class FlattenPropertyConversion extends AbstractVisitor implements ValuePathTransform {
 
+    private String[] excludes;
+
     public FlattenPropertyConversion() {
+        this(new String[0]);
+    }
+
+    public FlattenPropertyConversion(String[] excludes) {
+        this.excludes = excludes;
     }
 
     @Override
@@ -37,11 +44,33 @@ public class FlattenPropertyConversion extends AbstractVisitor implements ValueP
         visit(source.get(), new ValuePathVisitorImpl() {
             @Override
             public void onValue(ValuePath source, ValuePath target) {
-                if (source.path().isProperty()) {
+                if (source.path().isProperty() && !isExcluded(source)) {
                     object.put(String.valueOf(source.path().getTop()), source.get());
                 }
             }
+
+            @Override
+            public boolean onBeginArray(ValuePath source, ValuePath target) {
+                return !isExcluded(source);
+            }
+
+            @Override
+            public boolean onBeginObject(ValuePath source, ValuePath target) {
+                return !isExcluded(source);
+            }
         });
+    }
+
+    private boolean isExcluded(ValuePath prop) {
+        if (!prop.isRoot()) {
+            String name = String.valueOf(prop.path().getTop());
+            for (String ex : excludes) {
+                if (ex.equals(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
