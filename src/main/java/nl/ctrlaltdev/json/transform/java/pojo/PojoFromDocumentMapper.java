@@ -33,6 +33,10 @@ public class PojoFromDocumentMapper implements DocumentToJavaMapper, FromDocumen
         this(new DefaultDeserializer());
     }
 
+    public PojoFromDocumentMapper(boolean strict) {
+        this(new DefaultDeserializer(strict));
+    }
+
     public PojoFromDocumentMapper(Deserializer... deserializers) {
         this.deserializers = deserializers;
     }

@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nl.ctrlaltdev.json.transform.JsonTransform;
 import nl.ctrlaltdev.json.transform.java.pojo.PojoFromDocumentMapper;
 import nl.ctrlaltdev.json.transform.java.pojo.PojoToDocumentMapper;
+import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer.DocumentMappingException;
 import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer.UnsupportedCollectionTypeException;
 import nl.ctrlaltdev.json.transform.util.NodeUtils;
 
@@ -120,5 +122,28 @@ public class PojoFromDocumentMapperTest {
         mapper.toJava(UnknownCollection.class, obj);
     }
 
+    @Test(expected = DocumentMappingException.class)
+    public void shouldFailUnknownPropertyInStrictMode() {
+        Map<String, Object> obj = NodeUtils.newObject();
+        obj.put("a", "test");
+        obj.put("unknown", "test2");
+
+        SomePojo pojo = JsonTransform.toJavaStrict(SomePojo.class, obj);
+
+        assertEquals("test", pojo.a);
+        assertEquals("test2", pojo.b);
+    }
+
+    @Test
+    public void shouldNotFailUnknownPropertyInRelaxedMode() {
+        Map<String, Object> obj = NodeUtils.newObject();
+        obj.put("a", "test");
+        obj.put("unknown", "test2");
+
+        SomePojo pojo = JsonTransform.toJava(SomePojo.class, obj);
+
+        assertEquals("test", pojo.a);
+        assertEquals("b", pojo.b);
+    }
 
 }

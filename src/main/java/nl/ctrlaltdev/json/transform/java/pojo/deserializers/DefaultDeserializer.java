@@ -40,6 +40,20 @@ public class DefaultDeserializer implements Deserializer {
         public DocumentMappingException(Throwable ex) {
             super(ex);
         }
+
+        public DocumentMappingException(String msg) {
+            super(msg);
+        }
+    }
+
+    private boolean strict;
+
+    public DefaultDeserializer() {
+        this(true);
+    }
+
+    public DefaultDeserializer(boolean strict) {
+        this.strict = strict;
     }
 
     @Override
@@ -114,12 +128,29 @@ public class DefaultDeserializer implements Deserializer {
             handleObject(mapper, type.getSuperclass(), document, target);
         }
         for (Map.Entry<String, Object> entry : document.entrySet()) {
-            Field field = type.getDeclaredField(entry.getKey());
-            Class<?> genericType = getGenericType(field.getGenericType());
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
+            Field field = getField(type, entry.getKey());
+            if (field != null) {
+                Class<?> genericType = getGenericType(field.getGenericType());
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
+                field.set(target, mapper.toJava(field.getType(), genericType, entry.getValue()));
+            } else {
+                if (strict) {
+                    throw new DocumentMappingException("Field '" + entry.getKey() + "' not found in " + type.getName());
+                }
             }
-            field.set(target, mapper.toJava(field.getType(), genericType, entry.getValue()));
+        }
+    }
+
+    private Field getField(Class<?> type, String name) {
+        try {
+            return type.getDeclaredField(name);
+        } catch (NoSuchFieldException ex) {
+            if (type.getSuperclass() != null) {
+                return getField(type.getSuperclass(), name);
+            }
+            return null;
         }
     }
 

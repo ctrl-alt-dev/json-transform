@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
+import nl.ctrlaltdev.json.transform.java.DocumentToJavaMapper;
+import nl.ctrlaltdev.json.transform.java.JavaToDocumentMapper;
+import nl.ctrlaltdev.json.transform.java.pojo.PojoFromDocumentMapper;
+import nl.ctrlaltdev.json.transform.java.pojo.PojoToDocumentMapper;
 import nl.ctrlaltdev.json.transform.mapping.builder.CompositeMappingBuilder;
 import nl.ctrlaltdev.json.transform.mapping.builder.MappingBuilder;
 import nl.ctrlaltdev.json.transform.mapping.builder.PropertyMappingBuilder;
@@ -38,6 +42,12 @@ import nl.ctrlaltdev.json.transform.transforms.Transform;
  * Facade for the most important API's.
  */
 public class JsonTransform extends MappingBuilder {
+
+    private static final DocumentToJavaMapper RELAXED_JAVA_MAPPER = new PojoFromDocumentMapper(false);
+
+    private static final DocumentToJavaMapper STRICT_JAVA_MAPPER = new PojoFromDocumentMapper(true);
+
+    private static final JavaToDocumentMapper DOCUMENT_MAPPER = new PojoToDocumentMapper();
 
     /**
      * @return the root path.
@@ -180,12 +190,42 @@ public class JsonTransform extends MappingBuilder {
     }
 
     /**
-     * serializes a Map/ArrayList/Value structure to with formatting.
+     * serializes a Map/List/Value structure to with formatting.
      * @param obj the object to serialize.
      * @return the resulting string.
      */
     public static final String printPretty(Object obj) {
         return new JsonPrinter().toPrettyString(obj);
+    }
+
+    /**
+     * serializes a Java object into a Map/List/Value structure.
+     * @param src the source object.
+     * @return the resulting Map/List/Value structure.
+     */
+    public static final Object fromJava(Object src) {
+        return DOCUMENT_MAPPER.toDocument(src);
+    }
+
+    /**
+     * deserializes a Map/List/Value structure into the given Java type.
+     * @param type the type to serialize to.
+     * @param document the document.
+     * @return the resulting object.
+     */
+    public static final <A> A toJava(Class<A> type, Object document) {
+        return RELAXED_JAVA_MAPPER.toJava(type, document);
+    }
+
+    /**
+     * deserializes a Map/List/Value structure into the given Java type.
+     * All properties present in the JSON must be present in the Java type.
+     * @param type the type to serialize to.
+     * @param document the document.
+     * @return the resulting object.
+     */
+    public static final <A> A toJavaStrict(Class<A> type, Object document) {
+        return STRICT_JAVA_MAPPER.toJava(type, document);
     }
 
 }
