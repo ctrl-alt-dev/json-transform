@@ -30,6 +30,8 @@ import nl.ctrlaltdev.json.transform.transforms.structural.AbsoluteMovePropertyCo
 import nl.ctrlaltdev.json.transform.transforms.structural.AddPropertyConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.DeleteNodeConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.FlattenPropertyConversion;
+import nl.ctrlaltdev.json.transform.transforms.structural.ListifyConversion;
+import nl.ctrlaltdev.json.transform.transforms.structural.MapifyConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.RelativeMovePropertyConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.SkipConversion;
 import nl.ctrlaltdev.json.transform.transforms.value.ComputeAndAddValueTransform;
@@ -187,6 +189,26 @@ public class PropertyMappingBuilder {
      */
     public PropertyMappingBuilder flatten(final String property, String... excludes) {
         return mapping(new FlattenPropertyConversion(excludes), selectProperty(property));
+    }
+
+    /**
+     * converts an array into a map by using the keyProperty as the key value.
+     * @param property the property to apply this transformation on (must be a list of objects).
+     * @param keyProperty the key property to use for key values.
+     * @return the builder.
+     */
+    public PropertyMappingBuilder mapify(final String property, final String keyProperty) {
+        return mapping(new MapifyConversion(keyProperty), selectProperty(property));
+    }
+
+    /**
+     * converts an map into an array by setting the keyProperty with the key value.
+     * @param property the property to apply this transformation on (must be an object).
+     * @param keyProperty the key property to set the key value on.
+     * @return the builder.
+     */
+    public PropertyMappingBuilder listify(final String property, final String keyProperty) {
+        return mapping(new ListifyConversion(keyProperty), selectProperty(property));
     }
 
     /**

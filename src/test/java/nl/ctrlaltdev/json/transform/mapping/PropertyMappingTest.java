@@ -192,6 +192,49 @@ public class PropertyMappingTest {
     }
 
     @Test
+    public void shouldMapifyArray() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .mapify("some", "key")
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/mapify.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{some={a={key=a, value=b}, b={key=b, value=c}, c={key=c, value=d}}}", String.valueOf(output));
+    }
+
+    @Test
+    public void shouldListifyObject() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .listify("some", "key")
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/listify.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{some=[{d=e, key=a}, {e=f, key=b}, {key=c, value=d}]}", String.valueOf(output));
+    }
+
+    @Test
+    public void shouldMapifyListify() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .mapify("some", "key")
+                .build();
+        MappingTransform reverse = PropertyMappingBuilder.map()
+                .listify("some", "key")
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/mapify.json");
+
+        Object output = mapping.apply(input);
+        Object result = reverse.apply(output);
+
+        assertEquals("{some=[{key=a, value=b}, {key=b, value=c}, {key=c, value=d}]}", String.valueOf(result));
+    }
+
+    @Test
     public void shouldSkipProperty() {
         MappingTransform mapping = PropertyMappingBuilder.map()
                 .skip("components")
