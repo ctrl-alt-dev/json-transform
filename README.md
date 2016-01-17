@@ -94,11 +94,15 @@ Then start working with the JsonTransform API facade which exposes most of the f
 
 # Releases
 
+## 0.1.1 / 17 Januari 2016
+
+- Listify and Mapify transforms.
+- Added excludes to Flatten transform.
+- Relaxed toJava Mapping
+
 ## 0.1.0 / 14 January 2016
 
 First Release!
-
-
 
 
  
