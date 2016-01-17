@@ -51,7 +51,7 @@ To use JSON-Transform in your project, add the following Maven dependency:
 <dependency>
   <groupId>nl.ctrlaltdev.jsontransform</groupId>
   <artifactId>json-transform</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
