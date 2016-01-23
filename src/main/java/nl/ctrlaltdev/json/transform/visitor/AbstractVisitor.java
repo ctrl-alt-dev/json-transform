@@ -24,6 +24,10 @@ import nl.ctrlaltdev.json.transform.util.NodeUtils;
 public class AbstractVisitor {
 
     public interface ValuePathVisitor {
+        void onBeginTransform(ValuePath source, ValuePath target);
+
+        void onEndTransform(ValuePath source, ValuePath target);
+
         boolean onBeginArray(ValuePath source, ValuePath target);
 
         void onEndArray(ValuePath source, ValuePath target);
@@ -33,9 +37,16 @@ public class AbstractVisitor {
         void onEndObject(ValuePath source, ValuePath target);
 
         void onValue(ValuePath source, ValuePath target);
+
     }
 
     public abstract static class ValuePathVisitorImpl implements ValuePathVisitor {
+
+        @Override
+        public void onBeginTransform(ValuePath source, ValuePath target) {
+            // NOP
+        }
+
         @Override
         public boolean onBeginArray(ValuePath source, ValuePath target) {
             return true;
@@ -60,12 +71,19 @@ public class AbstractVisitor {
         public void onValue(ValuePath source, ValuePath target) {
             // NOP
         }
+
+        @Override
+        public void onEndTransform(ValuePath source, ValuePath target) {
+            // NOP
+        }
     }
 
     public Object visit(Object node, ValuePathVisitor v, Object targetNode) {
         ValuePath source = new ValuePath(node);
         ValuePath target = new ValuePath(targetNode);
+        v.onBeginTransform(source, target);
         this.doVisit(v, source, target);
+        v.onEndTransform(source, target);
         return target.value();
     }
 

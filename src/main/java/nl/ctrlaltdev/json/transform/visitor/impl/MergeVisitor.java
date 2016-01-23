@@ -23,6 +23,16 @@ import nl.ctrlaltdev.json.transform.visitor.AbstractVisitor.ValuePathVisitor;
 public final class MergeVisitor implements ValuePathVisitor {
 
     @Override
+    public void onBeginTransform(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
+    public void onEndTransform(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
     public boolean onBeginArray(ValuePath source, ValuePath target) {
         Object currentValue = target.get();
         if (NodeUtils.isNull(currentValue)) {

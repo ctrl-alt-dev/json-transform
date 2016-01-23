@@ -32,6 +32,7 @@ import nl.ctrlaltdev.json.transform.transforms.structural.DeleteNodeConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.FlattenPropertyConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.ListifyConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.MapifyConversion;
+import nl.ctrlaltdev.json.transform.transforms.structural.RaiseConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.RelativeMovePropertyConversion;
 import nl.ctrlaltdev.json.transform.transforms.structural.SkipConversion;
 import nl.ctrlaltdev.json.transform.transforms.value.ComputeAndAddValueTransform;
@@ -189,6 +190,16 @@ public class PropertyMappingBuilder {
      */
     public PropertyMappingBuilder flatten(final String property, String... excludes) {
         return mapping(new FlattenPropertyConversion(excludes), selectProperty(property));
+    }
+
+    /**
+     * raise moves the specified property's values to the leaf objects of that graph.
+     * @param property the property to raise.
+     * @param excludes the sub-properties to exclude.
+     * @return the builder.
+     */
+    public PropertyMappingBuilder raise(final String property, String... excludes) {
+        return mapping(new RaiseConversion(excludes), selectProperty(property));
     }
 
     /**

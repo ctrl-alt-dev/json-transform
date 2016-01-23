@@ -26,6 +26,16 @@ import nl.ctrlaltdev.json.transform.visitor.AbstractVisitor.ValuePathVisitor;
 public class IdentityVisitor implements ValuePathVisitor {
 
     @Override
+    public void onBeginTransform(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
+    public void onEndTransform(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
     public boolean onBeginArray(ValuePath source, ValuePath target) {
         target.set(NodeUtils.newArray());
         return true;

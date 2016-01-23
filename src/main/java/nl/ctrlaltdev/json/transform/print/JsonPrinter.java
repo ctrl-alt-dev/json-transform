@@ -39,7 +39,7 @@ public class JsonPrinter extends AbstractVisitor {
     }
 
     public void write(Object obj, final Writer writer, final boolean pretty) {
-        visit(obj, new ValuePathVisitor() {
+        visit(obj, new ValuePathVisitorImpl() {
             private int level = 0;
             private boolean first = true;
             @Override

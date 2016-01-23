@@ -24,10 +24,12 @@ import java.util.Map;
 import nl.ctrlaltdev.json.transform.JsonTransform;
 import nl.ctrlaltdev.json.transform.mapping.builder.PropertyMappingBuilder;
 import nl.ctrlaltdev.json.transform.path.relative.RelativePathBuilder;
+import nl.ctrlaltdev.json.transform.select.SelectBuilder;
 import nl.ctrlaltdev.json.transform.transforms.MappingTransform;
 import nl.ctrlaltdev.json.transform.transforms.convert.string.UppercaseConversion;
 import nl.ctrlaltdev.json.transform.transforms.convert.time.FormatTimestampToLocalDateTimeConversion;
 import nl.ctrlaltdev.json.transform.transforms.convert.time.ReformatDateTimeConversion;
+import nl.ctrlaltdev.json.transform.transforms.structural.RaiseConversion;
 import nl.ctrlaltdev.json.transform.utils.TestUtils;
 
 import org.junit.Test;
@@ -274,4 +276,54 @@ public class PropertyMappingTest {
         assertEquals("{arrays=[1, 2, [3, 4], 5, 6, [7, 8]], size=6}", String.valueOf(output));
 
     }
+
+    @Test
+    public void shouldRaise() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .mapping(new RaiseConversion(), SelectBuilder.selectRoot())
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/raise.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{c=[{a=b, d=e, j=k}, {g={a=b, e=f, h=i, j=k}}]}", String.valueOf(output));
+
+    }
+
+    @Test
+    public void shouldRaiseWithExcludes() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .mapping(new RaiseConversion("g"), SelectBuilder.selectRoot())
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/raise.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{c=[{a=b, d=e, j=k}, {a=b, e=f, j=k}]}", String.valueOf(output));
+
+    }
+
+    /**
+     * in this particular case the property c gets raised, however its an array
+     * of objects so it does not have any values from itself. The first object
+     * doesn't have any sub objects or arrays and is copied as is. The second
+     * object has an object property g, so the properties of the second object
+     * are moved to g. The root object is not changed.
+     */
+    @Test
+    public void shouldRaiseProperty() {
+        MappingTransform mapping = PropertyMappingBuilder.map()
+                .raise("c")
+                .build();
+
+        Map<String, Object> input = TestUtils.parseJson("/json/raise.json");
+
+        Object output = mapping.apply(input);
+
+        assertEquals("{a=b, c=[{d=e}, {g={e=f, h=i}}], j=k}", String.valueOf(output));
+
+    }
+
 }

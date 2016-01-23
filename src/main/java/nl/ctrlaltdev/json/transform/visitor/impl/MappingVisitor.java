@@ -31,6 +31,16 @@ public class MappingVisitor implements ValuePathVisitor {
     }
 
     @Override
+    public void onBeginTransform(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
+    public void onEndTransform(ValuePath source, ValuePath target) {
+        // Nop
+    }
+
+    @Override
     public boolean onBeginArray(ValuePath source, ValuePath target) {
         return applyTransformSelects(source, target, NodeUtils.newArray());
     }
