@@ -126,4 +126,8 @@ public final class NodeUtils {
         return true;
     }
 
+    public static Map<String, Object> shallowCopy(Map<String, Object> object) {
+        return new TreeMap<String, Object>(object);
+    }
+
 }

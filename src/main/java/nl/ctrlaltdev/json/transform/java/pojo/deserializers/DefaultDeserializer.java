@@ -47,13 +47,19 @@ public class DefaultDeserializer implements Deserializer {
     }
 
     private boolean strict;
+    private TypeSolver typeSolver;
 
     public DefaultDeserializer() {
         this(true);
     }
 
     public DefaultDeserializer(boolean strict) {
+        this(strict, new PropertyTypeSolver());
+    }
+
+    public DefaultDeserializer(boolean strict, TypeSolver typeSolver) {
         this.strict = strict;
+        this.typeSolver = typeSolver;
     }
 
     @Override
@@ -112,20 +118,30 @@ public class DefaultDeserializer implements Deserializer {
         return result;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Object handleObject(FromDocumentMapper mapper, Class<?> type, Map document) {
+    @SuppressWarnings({ "rawtypes" })
+    private Object handleObject(FromDocumentMapper mapper, Class<?> type, Map<String, Object> document) {
         try {
-            Object target = type.newInstance();
-            handleObject(mapper, type, (Map<String, Object>) document, target);
+            Set<String> handled = new HashSet<String>();
+            Class solvedType = typeSolver.solveType(type, document, handled);
+            Object target = solvedType.newInstance();
+            handleObject(mapper, solvedType, document, target, handled);
+            if (strict) {
+                Set<String> keySet = document.keySet();
+                keySet.removeAll(handled);
+                if (!keySet.isEmpty()) {
+                    throw new DocumentMappingException("Field(s) " + keySet + " not found in " + type.getName());
+                }
+            }
             return target;
         } catch (ReflectiveOperationException ex) {
             throw new DocumentMappingException(ex);
         }
     }
 
-    private void handleObject(FromDocumentMapper mapper, Class<?> type, Map<String, Object> document, Object target) throws ReflectiveOperationException {
+    private void handleObject(FromDocumentMapper mapper, Class<?> type, Map<String, Object> document, Object target, Set<String> handled)
+            throws ReflectiveOperationException {
         if (!type.getSuperclass().equals(Object.class)) {
-            handleObject(mapper, type.getSuperclass(), document, target);
+            handleObject(mapper, type.getSuperclass(), document, target, handled);
         }
         for (Map.Entry<String, Object> entry : document.entrySet()) {
             Field field = getField(type, entry.getKey());
@@ -135,10 +151,7 @@ public class DefaultDeserializer implements Deserializer {
                     field.setAccessible(true);
                 }
                 field.set(target, mapper.toJava(field.getType(), genericType, entry.getValue()));
-            } else {
-                if (strict) {
-                    throw new DocumentMappingException("Field '" + entry.getKey() + "' not found in " + type.getName());
-                }
+                handled.add(entry.getKey());
             }
         }
     }

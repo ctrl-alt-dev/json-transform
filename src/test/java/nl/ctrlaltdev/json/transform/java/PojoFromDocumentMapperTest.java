@@ -17,6 +17,7 @@ package nl.ctrlaltdev.json.transform.java;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +29,10 @@ import java.util.Set;
 import nl.ctrlaltdev.json.transform.JsonTransform;
 import nl.ctrlaltdev.json.transform.java.pojo.PojoFromDocumentMapper;
 import nl.ctrlaltdev.json.transform.java.pojo.PojoToDocumentMapper;
+import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer;
 import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer.DocumentMappingException;
 import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer.UnsupportedCollectionTypeException;
+import nl.ctrlaltdev.json.transform.java.pojo.deserializers.PropertyTypeSolver;
 import nl.ctrlaltdev.json.transform.util.NodeUtils;
 
 import org.junit.Before;
@@ -55,6 +58,15 @@ public class PojoFromDocumentMapperTest {
         @Override
         public String toString() {
             return some + "|" + pojos + "|" + nested;
+        }
+    }
+
+    public static class SubclassPojo extends SomePojo {
+        private String c = "c";
+
+        @Override
+        public String toString() {
+            return super.toString() + "|" + c;
         }
     }
 
@@ -144,6 +156,19 @@ public class PojoFromDocumentMapperTest {
 
         assertEquals("test", pojo.a);
         assertEquals("b", pojo.b);
+    }
+
+    @Test
+    public void shouldMapViaTypeSolver() {
+        PropertyTypeSolver typeSolver = new PropertyTypeSolver();
+        typeSolver.mapType(SomePojo.class, SubclassPojo.class, "type", "a");
+        typeSolver.mapType(SomePojo.class, SomePojo.class, "type", "b");
+        mapper = new PojoFromDocumentMapper(new DefaultDeserializer(true, typeSolver));
+
+        SomePojo java = mapper.toJava(SomePojo.class, JsonTransform.parse("{ \"type\":\"a\", \"a\":\"z\", \"c\": \"y\" }"));
+        assertTrue(java instanceof SubclassPojo);
+        assertEquals("z", java.a);
+        assertEquals("y", ((SubclassPojo) java).c);
     }
 
 }
