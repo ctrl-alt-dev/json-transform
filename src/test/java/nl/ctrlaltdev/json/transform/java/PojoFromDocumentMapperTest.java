@@ -19,12 +19,20 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import nl.ctrlaltdev.json.transform.JsonTransform;
 import nl.ctrlaltdev.json.transform.java.pojo.PojoFromDocumentMapper;
@@ -33,10 +41,8 @@ import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer;
 import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer.DocumentMappingException;
 import nl.ctrlaltdev.json.transform.java.pojo.deserializers.DefaultDeserializer.UnsupportedCollectionTypeException;
 import nl.ctrlaltdev.json.transform.java.pojo.deserializers.PropertyTypeSolver;
+import nl.ctrlaltdev.json.transform.java.pojo.deserializers.value.DateDeserializer;
 import nl.ctrlaltdev.json.transform.util.NodeUtils;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class PojoFromDocumentMapperTest {
 
@@ -73,6 +79,25 @@ public class PojoFromDocumentMapperTest {
     public static class UnknownCollection {
         @SuppressWarnings("unused")
         private Map<String, String> map;
+    }
+
+    public static class ValueTypes {
+        private Integer a;
+        private Long b;
+        private Double c;
+        private Boolean d;
+
+        private int e;
+        private long f;
+        private double g;
+        private boolean h;
+    }
+
+    public static class DateValueTypes {
+        private Date date;
+        private LocalDate localDate;
+        private LocalDateTime localDateTime;
+        private ZonedDateTime zonedDateTime;
     }
 
     private PojoFromDocumentMapper mapper;
@@ -169,6 +194,50 @@ public class PojoFromDocumentMapperTest {
         assertTrue(java instanceof SubclassPojo);
         assertEquals("z", java.a);
         assertEquals("y", ((SubclassPojo) java).c);
+    }
+
+    @Test
+    public void shouldMapStringValueToValueType() {
+        Map<String, Object> obj = NodeUtils.newObject();
+        obj.put("a", "1");
+        obj.put("b", "2");
+        obj.put("c", "4.2");
+        obj.put("d", "true");
+
+        obj.put("e", "1");
+        obj.put("f", "2");
+        obj.put("g", "4.2");
+        obj.put("h", "true");
+
+        mapper = new PojoFromDocumentMapper(new DefaultDeserializer(true));
+        ValueTypes pojo = mapper.toJava(ValueTypes.class, obj);
+
+        assertEquals(Integer.valueOf(1), pojo.a);
+        assertEquals(Long.valueOf(2), pojo.b);
+        assertEquals(Double.valueOf(4.2), pojo.c, 0.01);
+        assertEquals(Boolean.TRUE, pojo.d);
+
+        assertEquals(1, pojo.e);
+        assertEquals(2L, pojo.f);
+        assertEquals(4.2, pojo.g, 0.01);
+        assertEquals(true, pojo.h);
+    }
+
+    @Test
+    public void shouldMapStringValueToDateType() {
+        Map<String, Object> obj = NodeUtils.newObject();
+        obj.put("date", "200101010000Z");
+        obj.put("localDate", "200101020000Z");
+        obj.put("localDateTime", "200101030000Z");
+        obj.put("zonedDateTime", "200101040000Z");
+
+        mapper = new PojoFromDocumentMapper(new DefaultDeserializer(true, new DateDeserializer("yyyyMMddHHmmX")));
+        DateValueTypes pojo = mapper.toJava(DateValueTypes.class, obj);
+
+        assertEquals(new Date(101, 0, 1), pojo.date);
+        assertEquals(LocalDate.of(2001, 1, 2), pojo.localDate);
+        assertEquals(LocalDateTime.of(2001, 1, 3, 0, 0, 0), pojo.localDateTime);
+        assertEquals(ZonedDateTime.of(LocalDateTime.of(2001, 1, 4, 0, 0, 0), ZoneId.of("Z")), pojo.zonedDateTime);
     }
 
 }

@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 import nl.ctrlaltdev.json.transform.java.pojo.FromDocumentMapper;
+import nl.ctrlaltdev.json.transform.java.pojo.deserializers.value.DefaultValueDeserializer;
+import nl.ctrlaltdev.json.transform.java.pojo.deserializers.value.ValueDeserializer;
 
 public class DefaultDeserializer implements Deserializer {
 
@@ -48,18 +50,24 @@ public class DefaultDeserializer implements Deserializer {
 
     private boolean strict;
     private TypeSolver typeSolver;
+    private ValueDeserializer[] valueDeserializers;
 
     public DefaultDeserializer() {
         this(true);
     }
 
     public DefaultDeserializer(boolean strict) {
-        this(strict, new PropertyTypeSolver());
+        this(strict, new PropertyTypeSolver(), new DefaultValueDeserializer());
     }
 
-    public DefaultDeserializer(boolean strict, TypeSolver typeSolver) {
+    public DefaultDeserializer(boolean strict, ValueDeserializer... deserializers) {
+        this(strict, new PropertyTypeSolver(), deserializers);
+    }
+
+    public DefaultDeserializer(boolean strict, TypeSolver typeSolver, ValueDeserializer... deserializers) {
         this.strict = strict;
         this.typeSolver = typeSolver;
+        this.valueDeserializers = deserializers;
     }
 
     @Override
@@ -77,8 +85,17 @@ public class DefaultDeserializer implements Deserializer {
         } else if (document instanceof List) {
             return handleList(mapper, type, genericType, (List) document);
         } else {
-            return document;
+            return handleValue(type, document);
         }
+    }
+
+    private Object handleValue(Class<?> type, Object document) {
+        for (ValueDeserializer valueDeserializer : valueDeserializers) {
+            if (valueDeserializer.accept(null, type, null)) {
+                return valueDeserializer.deserialize(type, document);
+            }
+        }
+        return document;
     }
 
     private Object handleList(FromDocumentMapper mapper, Class<?> type, Class<?> genericType, List<Object> document) {

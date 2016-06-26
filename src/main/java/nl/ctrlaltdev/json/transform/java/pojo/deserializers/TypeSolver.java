@@ -20,6 +20,13 @@ import java.util.Set;
 
 public interface TypeSolver {
 
-    <A> Class<? extends A> solveType(Class<A> declared, Map<String, Object> object,Set<String> handled);
+    /**
+     * determines the subclass of the declared class that this object represents.
+     * @param declared the declared class.
+     * @param object the object.
+     * @param handled the map of handled properties.
+     * @return the actual (sub) class.
+     */
+    <A> Class<? extends A> solveType(Class<A> declared, Map<String, Object> object, Set<String> handled);
 
 }
